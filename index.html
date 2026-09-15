@@ -2,3312 +2,2192 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
-<link rel="apple-touch-icon" href="./icon-192.png">
-<meta name="theme-color" content="#f7f7f7">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-
-<meta
-  name="viewport"
-  content="width=device-width,
-           initial-scale=1,
-           maximum-scale=1,
-           user-scalable=no"
->
-
-<title>Pipe Control — 1000 Stages — Ranking</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>PIPE CONTROL GB</title>
 <style>
+/* ==========================================================================
+   PIZZA BOY / PIPE BOY HANDHELD EMULATOR SKIN
+   Faithfully inspired by the high-end OLED Game Boy Mobile Skin
+   ========================================================================== */
+:root {
+  /* Skin Colors */
+  --chassis-bg: #d7d5d0;
+  --chassis-shadow: #b8b5ae;
+  --chassis-highlight: #eae8e3;
+  --bezel-bg: #22252a;
+  --bezel-inner: #07080a;
+  
+  /* Buttons */
+  --btn-ruby: #b9115a;
+  --btn-ruby-dark: #6e0433;
+  --btn-ruby-light: #e8267a;
+  --dpad-base: #333539;
+  --dpad-light: #484b50;
+  --dpad-dark: #1e1f21;
+  --pill-bg: #ecebea;
+  --pill-border: #9b9994;
 
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+  /* Default 4-Shade Palette: Classic Game Boy DMG */
+  --c0: #0f380f; /* Darkest / Ink */
+  --c1: #306230; /* Dark Green */
+  --c2: #8bac0f; /* Light Green */
+  --c3: #9bbc0f; /* Background Green */
 }
 
-html,body{width:100%;height:100%;min-height:100dvh;overflow:hidden;background:#0f1012;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;display:flex;align-items:stretch;justify-content:stretch}
-
-body{
-    display:flex;
-    align-items:center;
-    justify-content:center;
+/* Palette Preset: Organic LED / Monochrome High Contrast */
+body.theme-oled {
+  --c0: #050505;
+  --c1: #363a40;
+  --c2: #8c939e;
+  --c3: #edf0f5;
 }
 
-#game{
-    display:block;
-
-    width:100vw;
-    height:100vh;
-
-    touch-action:none;
-
-    background:#f7f7f7;
+/* Palette Preset: Pocket B&W */
+body.theme-pocket {
+  --c0: #1b2019;
+  --c1: #51624b;
+  --c2: #8da47f;
+  --c3: #c9dbc0;
 }
 
-/* =====================================================
-   CONTROLES
-   ===================================================== */
-
-.controls{
-
-    position:fixed;
-
-    left:50%;
-    bottom:10px;
-
-    transform:
-        translateX(-50%);
-
-    width:min(760px,96vw);
-
-    display:flex;
-
-    gap:8px;
-
-    z-index:20;
+/* Palette Preset: Cyber Amber */
+body.theme-amber {
+  --c0: #261600;
+  --c1: #784805;
+  --c2: #d68910;
+  --c3: #f9e79f;
 }
 
-button{
-
-    flex:1;
-
-    min-height:48px;
-
-    border:2px solid #535353;
-
-    background:#f7f7f7;
-
-    color:#535353;
-
-    font-family:
-        "Courier New",
-        monospace;
-
-    font-weight:bold;
-
-    font-size:13px;
-
-    cursor:pointer;
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  margin: 0;
+  padding: 0;
 }
 
-button:active{
-
-    background:#535353;
-
-    color:#f7f7f7;
+html, body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  overflow: hidden;
+  background: #0f1012;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  margin: 0;
+  padding: 0;
 }
 
-#rotate{
-
-    font-size:15px;
+html {
+  min-height: 100dvh;
 }
 
-@media(max-width:600px){
-
-    .controls{
-
-        width:97vw;
-
-        bottom:6px;
-    }
-
-    button{
-
-        min-height:50px;
-
-        font-size:10px;
-
-        padding:
-            6px 3px;
-    }
+body {
+  min-height: 100dvh;
+  width: 100vw;
 }
 
-
-/* =====================================================
-   RANKING / RECORDES
-   ===================================================== */
-
-.records-open{
-    position:fixed;
-    top:8px;
-    right:8px;
-    z-index:30;
-    width:auto;
-    min-width:120px;
-    min-height:38px;
-    padding:6px 10px;
-    background:#f7f7f7;
-    color:#535353;
-    border:2px solid #535353;
-    font-family:"Courier New",monospace;
-    font-size:11px;
-    font-weight:bold;
+/* Outer Wrapper: Full viewport on mobile, sleek phone frame on desktop */
+.emulator-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  min-width: 100vw;
+  min-height: 100dvh;
+  max-width: none;
+  max-height: none;
+  background: var(--chassis-bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: none;
+  border-radius: 0;
+  flex: 1 1 auto;
 }
 
-.records-modal{
-    position:fixed;
-    inset:0;
-    z-index:1000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:16px;
-    background:rgba(247,247,247,.96);
+@supports not (height: 100dvh) {
+  .emulator-wrapper {
+    height: 100vh;
+    min-height: 100vh;
+  }
 }
 
-.records-modal.hidden{
-    display:none;
+/* Tela cheia real quando o navegador permitir */
+.emulator-wrapper:fullscreen {
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-.records-panel{
-    position:relative;
-    width:min(460px,94vw);
-    max-height:88vh;
-    overflow:auto;
-    padding:22px 18px 18px;
-    border:3px solid #535353;
-    background:#f7f7f7;
-    box-shadow:8px 8px 0 #535353;
+/* ==========================================================================
+   TOP SECTION: DARK SCREEN BEZEL (ORGANIC LED DISPLAY)
+   ========================================================================== */
+.bezel-panel {
+  min-height: 0;
+  flex: 0 0 44%;
+  position: relative;
+  width: 100%;
+  height: 44%;
+  min-height: 250px;
+  background: radial-gradient(circle at 50% 25%, #2a2d33 0%, #1c1e22 100%);
+  display: flex;
+  flex-direction: column;
+  padding: 12px 16px 8px 16px;
+  box-sizing: border-box;
+  box-shadow: 
+    inset 0 -3px 8px rgba(0,0,0,0.6),
+    0 4px 12px rgba(0,0,0,0.4);
+  border-bottom: 2px solid #141517;
+  z-index: 10;
 }
 
-.records-panel h2{
-    margin:0;
-    text-align:center;
-    font-size:22px;
-    letter-spacing:1px;
+/* Top Accent Header */
+.bezel-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+  padding: 0 4px;
 }
 
-.records-subtitle{
-    margin:7px 0 16px;
-    text-align:center;
-    font-size:10px;
-    color:#666;
+.top-bar-line {
+  flex: 1;
+  height: 2px;
+  background: #474b53;
+  border-radius: 1px;
 }
 
-.records-close{
-    position:absolute;
-    right:8px;
-    top:7px;
-    width:34px;
-    min-width:34px;
-    height:34px;
-    min-height:34px;
-    padding:0;
-    border:2px solid #535353;
-    background:#f7f7f7;
-    font-size:23px;
-    line-height:1;
+.top-bar-text {
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #8b9099;
+  text-transform: uppercase;
+  margin: 0 10px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 0.2s;
 }
 
-.records-list{
-    display:flex;
-    flex-direction:column;
-    gap:7px;
+.top-bar-text:active {
+  color: #fff;
 }
 
-.record-item{
-    display:grid;
-    grid-template-columns:42px 1fr auto;
-    gap:9px;
-    align-items:center;
-    min-height:54px;
-    padding:7px 9px;
-    border:1px solid #c8c8c8;
-    background:#fff;
+/* Screen Housing (OLED Screen) */
+.screen-housing {
+  min-height: 0;
+  position: relative;
+  flex: 1;
+  width: 100%;
+  background: var(--bezel-inner);
+  border-radius: 10px;
+  border: 1px solid #141517;
+  box-shadow: 
+    inset 0 3px 10px rgba(0, 0, 0, 0.9),
+    0 1px 2px rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 4px;
 }
 
-.record-position{
-    text-align:center;
-    font-size:15px;
-    font-weight:bold;
+/* Canvas Element: 160x144 Scaled with Crisp Pixels */
+#gb-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: pixelated;
+  background: var(--c3);
+  border-radius: 4px;
+  transition: opacity 0.2s;
 }
 
-.record-name{
-    font-size:13px;
-    font-weight:bold;
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis;
+#gb-canvas.screen-off {
+  opacity: 0.05;
+  filter: blur(1px);
 }
 
-.record-meta{
-    margin-top:3px;
-    font-size:9px;
-    color:#777;
+/* Subtle CRT/LCD Scanline & Pixel Mesh */
+.screen-housing::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px);
+  background-size: 100% 2px;
+  z-index: 3;
 }
 
-.record-score{
-    text-align:right;
-    font-size:13px;
-    font-weight:bold;
+/* Bottom Bezel Bar (Power Button / Status) */
+.bezel-bottom-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  padding-left: 4px;
 }
 
-.records-empty{
-    padding:25px 10px;
-    text-align:center;
-    border:1px dashed #aaa;
-    font-size:11px;
-    line-height:1.6;
+.power-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 2px;
 }
 
-.records-clear{
-    width:100%;
-    margin-top:14px;
-    min-height:40px;
-    border:2px solid #535353;
-    background:#f7f7f7;
-    color:#535353;
-    font-family:"Courier New",monospace;
-    font-size:10px;
-    font-weight:bold;
+.power-icon {
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+  color: #ff2828;
+  filter: drop-shadow(0 0 4px rgba(255, 40, 40, 0.7));
+  transition: filter 0.3s, color 0.3s;
 }
 
-@media(max-width:600px){
-    .records-open{
-        min-width:96px;
-        min-height:34px;
-        font-size:9px;
-        padding:4px 7px;
-    }
-
-    .records-panel{
-        width:96vw;
-        padding:20px 12px 14px;
-        box-shadow:5px 5px 0 #535353;
-    }
-
-    .records-panel h2{
-        font-size:18px;
-    }
-
-    .record-item{
-        grid-template-columns:34px 1fr auto;
-        min-height:49px;
-        padding:6px;
-    }
-
-    .record-name{
-        font-size:11px;
-    }
-
-    .record-score{
-        font-size:11px;
-    }
+.power-btn.off .power-icon {
+  color: #551212;
+  filter: none;
 }
 
+.power-label {
+  font-size: 8px;
+  font-weight: 800;
+  color: #5d616a;
+  letter-spacing: 0.6px;
+}
 
-.emulator-wrapper:fullscreen{width:100vw;height:100dvh;max-width:none;max-height:none;border-radius:0;box-shadow:none}
+/* ==========================================================================
+   LOWER SECTION: RETRO CONSOLE CHASSIS & CONTROLS
+   ========================================================================== */
+.chassis-panel {
+  min-height: 0;
+  position: relative;
+  flex: 1;
+  width: 100%;
+  background: var(--chassis-bg);
+  box-shadow: inset 0 3px 6px rgba(255,255,255,0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 14px 18px 14px 18px;
+  box-sizing: border-box;
+}
+
+/* Top Branding & Quick Bar Row */
+.chassis-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.brand-section {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.brand-title {
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 22px;
+  font-weight: 900;
+  font-style: italic;
+  color: #3b3e44;
+  letter-spacing: 0.4px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* Speed Selector Toolbar */
+.speed-bar {
+  display: flex;
+  align-items: center;
+  background: #3a3c42;
+  border-radius: 14px;
+  padding: 3px 6px;
+  gap: 6px;
+  box-shadow: 
+    inset 0 1px 3px rgba(0,0,0,0.5),
+    0 1px 1px rgba(255,255,255,0.4);
+}
+
+.speed-item {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #8c8f96;
+  transition: all 0.15s ease;
+}
+
+.speed-item svg {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+
+.speed-item.active {
+  background: #ffffff;
+  color: #2b2d31;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.speed-item:active {
+  transform: scale(0.9);
+}
+
+/* SELECT and START Buttons (Center-Right) */
+.meta-buttons-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.pill-btn-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pill-btn {
+  width: 50px;
+  height: 16px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #f5f4f0 0%, #d8d6d0 100%);
+  border: 1px solid var(--pill-border);
+  box-shadow: 
+    0 3px 4px rgba(0,0,0,0.22),
+    inset 0 1px 1px #fff;
+  cursor: pointer;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #55575d;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  transition: transform 0.06s, box-shadow 0.06s;
+  touch-action: manipulation;
+}
+
+.pill-btn:active, .pill-btn.pressed {
+  transform: translateY(1.5px);
+  box-shadow: 
+    0 1px 2px rgba(0,0,0,0.3),
+    inset 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* ==========================================================================
+   MAIN CONTROLS: HUGE D-PAD & DIAGONAL RUBY A/B BUTTONS
+   ========================================================================== */
+.controls-main-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex: 1;
+  padding: 6px 0;
+}
+
+/* 3D TACTILE D-PAD CROSS */
+.dpad-wrapper {
+  position: relative;
+  width: 146px;
+  height: 146px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dpad-cross {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  filter: drop-shadow(0 8px 14px rgba(0,0,0,0.35)) drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Cross base arms with smooth rounded tips and 3D bevels */
+.dpad-arm-v {
+  position: absolute;
+  top: 0;
+  left: 47px;
+  width: 46px;
+  height: 140px;
+  background: var(--dpad-base);
+  border-radius: 9px;
+  box-shadow: 
+    inset 0 2px 2px var(--dpad-light),
+    inset 0 -2px 2px var(--dpad-dark);
+}
+
+.dpad-arm-h {
+  position: absolute;
+  top: 47px;
+  left: 0;
+  width: 140px;
+  height: 46px;
+  background: var(--dpad-base);
+  border-radius: 9px;
+  box-shadow: 
+    inset 2px 0 2px var(--dpad-light),
+    inset -2px 0 2px var(--dpad-dark);
+}
+
+/* Central pivot indentation */
+.dpad-center {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, #2d2f33 0%, #222326 100%);
+  border-radius: 50%;
+  box-shadow: inset 0 0 6px #111214;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Directional Buttons */
+.d-btn {
+  position: absolute;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  outline: none;
+  touch-action: manipulation;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.d-btn-up    { top: 0; left: 47px; width: 46px; height: 48px; border-radius: 9px 9px 0 0; }
+.d-btn-down  { bottom: 0; left: 47px; width: 46px; height: 48px; border-radius: 0 0 9px 9px; }
+.d-btn-left  { top: 47px; left: 0; width: 48px; height: 46px; border-radius: 9px 0 0 9px; }
+.d-btn-right { top: 47px; right: 0; width: 48px; height: 46px; border-radius: 0 9px 9px 0; }
+
+/* Visual feedback on press */
+.d-btn.pressed, .d-btn:active {
+  background: rgba(0, 0, 0, 0.25);
+}
+
+/* Tactile arrow indicators */
+.d-btn::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  pointer-events: none;
+}
+
+.d-btn-up::after {
+  top: 10px;
+  border-width: 0 6px 7px 6px;
+  border-color: transparent transparent #4a4c52 transparent;
+}
+
+.d-btn-down::after {
+  bottom: 10px;
+  border-width: 7px 6px 0 6px;
+  border-color: #4a4c52 transparent transparent transparent;
+}
+
+.d-btn-left::after {
+  left: 10px;
+  border-width: 6px 7px 6px 0;
+  border-color: transparent #4a4c52 transparent transparent;
+}
+
+.d-btn-right::after {
+  right: 10px;
+  border-width: 6px 0 6px 7px;
+  border-color: transparent transparent transparent #4a4c52;
+}
+
+/* ==========================================================================
+   A and B ACTION BUTTONS (STAGGERED DIAGONAL)
+   Large, gorgeous circular ruby buttons matching the uploaded image
+   ========================================================================== */
+.ab-buttons-container {
+  position: relative;
+  width: 154px;
+  height: 154px;
+}
+
+.action-btn {
+  position: absolute;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 1.5px solid #6b0532;
+  background: radial-gradient(circle at 35% 30%, #e62377 0%, #b80f57 55%, #7e0539 100%);
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.38),
+    0 2px 4px rgba(0, 0, 0, 0.22),
+    inset 0 2px 3px rgba(255, 255, 255, 0.35);
+  cursor: pointer;
+  outline: none;
+  touch-action: manipulation;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #520225;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 26px;
+  font-weight: 900;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.15);
+  transition: transform 0.05s, box-shadow 0.05s;
+}
+
+/* Exact layout from screenshot: A is top-right, B is bottom-left */
+.btn-action-a {
+  top: 4px;
+  right: 4px;
+}
+
+.btn-action-b {
+  bottom: 8px;
+  left: 8px;
+}
+
+.action-btn:active, .action-btn.pressed {
+  transform: scale(0.93) translateY(2px);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================================================
+   BOTTOM ROW: SPEAKER GRILL & AUXILIARY ICONS
+   ========================================================================== */
+.chassis-bottom-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 4px;
+  padding: 0 4px;
+}
+
+.aux-icons-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: #92959c;
+}
+
+.aux-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+.aux-icon-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.aux-icon-btn:active {
+  color: #3b3e44;
+}
+
+/* 3 Horizontal Pill Speaker Vents */
+.speaker-grill {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 76px;
+  margin-bottom: 2px;
+}
+
+.speaker-vent {
+  width: 100%;
+  height: 7px;
+  background: #232528;
+  border-radius: 4px;
+  box-shadow: 
+    inset 0 2px 3px rgba(0,0,0,0.85),
+    0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+/* Responsive adjustment for small viewport heights */
+@media (max-height: 640px) {
+  .brand-title { font-size: 18px; }
+  .speed-bar { transform: scale(0.9); }
+  .dpad-wrapper { width: 124px; height: 124px; }
+  .dpad-cross { width: 120px; height: 120px; }
+  .dpad-arm-v { left: 40px; width: 40px; height: 120px; }
+  .dpad-arm-h { top: 40px; width: 120px; height: 40px; }
+  .dpad-center { top: 42px; left: 42px; width: 36px; height: 36px; }
+  .d-btn-up { left: 40px; width: 40px; height: 40px; }
+  .d-btn-down { left: 40px; width: 40px; height: 40px; }
+  .d-btn-left { top: 40px; width: 40px; height: 40px; }
+  .d-btn-right { top: 40px; width: 40px; height: 40px; }
+  .ab-buttons-container { width: 130px; height: 130px; }
+  .action-btn { width: 56px; height: 56px; font-size: 22px; }
+}
 </style>
 </head>
-
 <body>
 
-<canvas id="game"></canvas>
-
-<button id="recordsOpen" class="records-open">🏆 RECORDES</button>
-
-<div class="controls">
-
-    <button id="rotate">
-        ↻ GIRAR
-    </button>
-
-    <button id="restart">
-        ↻ REINICIAR
-    </button>
-
-    <button
-        id="next"
-        style="display:none"
-    >
-        ▶ PRÓXIMA
-    </button>
-
-    <button id="fullscreen">
-        ⛶ TELA INTEIRA
-    </button>
-
-</div>
-
-<div id="recordsModal" class="records-modal hidden" aria-hidden="true">
-    <div class="records-panel" role="dialog" aria-modal="true" aria-labelledby="recordsTitle">
-        <button id="recordsClose" class="records-close" aria-label="Fechar recordes">×</button>
-        <h2 id="recordsTitle">🏆 RECORDES</h2>
-        <p class="records-subtitle">TOP 10 — MELHORES PONTUAÇÕES</p>
-        <div id="recordsList" class="records-list"></div>
-        <button id="recordsClear" class="records-clear">LIMPAR RECORDES</button>
+<div class="emulator-wrapper" id="emulator-skin">
+  
+  <!-- ====================================================================
+       TOP BEZEL (ORGANIC LED SCREEN)
+       ==================================================================== -->
+  <div class="bezel-panel">
+    <div class="bezel-top-bar">
+      <div class="top-bar-line"></div>
+      <div class="top-bar-text" id="toggle-palette-btn" title="Toque para alternar Paleta de Cores">ORGANIC LED WITH STEREO SOUND</div>
+      <div class="top-bar-line"></div>
     </div>
+    
+    <div class="screen-housing">
+      <canvas id="gb-canvas" width="160" height="144"></canvas>
+    </div>
+    
+    <div class="bezel-bottom-bar">
+      <button class="power-btn" id="power-toggle" title="Ligar / Desligar Tela">
+        <svg class="power-icon" viewBox="0 0 24 24">
+          <path fill="currentColor" d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42A7.92 7.92 0 0 1 20 12c0 4.42-3.58 8-8 8s-8-3.58-8-8c0-2.48 1.13-4.7 2.91-6.17L5.5 4.41C3.36 6.27 2 9 2 12c0 5.52 4.48 10 10 10s10-4.48 10-10c0-3.04-1.36-5.77-3.5-7.63l-.67.8z"/>
+        </svg>
+        <span class="power-label">ON/OFF</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       LOWER CHASSIS (GAME BOY BODY & CONTROLS)
+       ==================================================================== -->
+  <div class="chassis-panel">
+    
+    <!-- Top Row: Brand & Speed Controller + Select/Start -->
+    <div class="chassis-header-row">
+      <div class="brand-section">
+        <div class="brand-title">PIPE CONTROL GB</div>
+        
+        <!-- Interactive Speed Multiplier Bar -->
+        <div class="speed-bar" id="speed-bar" title="Velocidade do Jogo">
+          <!-- 1. Turtle (0.5x) -->
+          <div class="speed-item" data-speed="0.5" title="0.5x Lento">
+            <svg viewBox="0 0 24 24"><path d="M19 13c.6 0 1-.4 1-1s-.4-1-1-1h-1.2C17.3 9.4 15.8 8 14 8h-4C8.2 8 6.7 9.4 6.2 11H5c-.6 0-1 .4-1 1s.4 1 1 1h.3C5.1 13.6 5 14.3 5 15c0 1.1.4 2.1 1 3v1c0 .6.4 1 1 1h1c.6 0 1-.4 1-1v-.3c.6.2 1.3.3 2 .3s1.4-.1 2-.3v.3c0 .6.4 1 1 1h1c.6 0 1-.4 1-1v-1c.6-.9 1-1.9 1-3 0-.7-.1-1.4-.3-2H19z"/></svg>
+          </div>
+          <!-- 2. Slower turtle (0.75x) -->
+          <div class="speed-item" data-speed="0.75" title="0.75x Moderado">
+            <svg viewBox="0 0 24 24"><path d="M17 13c.6 0 1-.4 1-1s-.4-1-1-1h-1c-.5-1.5-1.7-2.6-3.2-2.9V7c0-.6-.4-1-1-1s-1 .4-1 1v1.1C9.3 9.4 8.1 10.5 7.6 12H6c-.6 0-1 .4-1 1s.4 1 1 1c0 2.2 1.8 4 4 4h4c2.2 0 4-1.8 4-4 0-.3 0-.7-.1-1H17z"/></svg>
+          </div>
+          <!-- 3. Walking Person (1.0x Normal - Active) -->
+          <div class="speed-item active" data-speed="1.0" title="1.0x Normal">
+            <svg viewBox="0 0 24 24"><path d="M13.5 5.5c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zM9.8 8.9L7 23h2.1l1.8-8 2.1 2v6h2v-7.5l-2.1-2 .6-3C14.8 12 16.8 13 19 13v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1L6 8.3V13h2V9.6l1.8-.7z"/></svg>
+          </div>
+          <!-- 4. Running Rabbit (1.5x Fast) -->
+          <div class="speed-item" data-speed="1.5" title="1.5x Rápido">
+            <svg viewBox="0 0 24 24"><path d="M19.5 9.5c-1 0-1.8.6-2.2 1.5l-2.3-1c.2-.5.3-1 .3-1.6 0-2.2-1.8-4-4-4-.7 0-1.4.2-2 .5L9 2H7l1.5 5.3C7.5 8.1 7 9.2 7 10.5c0 .6.1 1.2.3 1.7L4 14v2l4-1.5 3 2.5 5-2c1.7 0 3-1.3 3-3 0-.2 0-.3-.1-.5.4-.5.6-1.2.6-2z"/></svg>
+          </div>
+          <!-- 5. Turbo Rabbit (2.0x Turbo) -->
+          <div class="speed-item" data-speed="2.0" title="2.0x Turbo">
+            <svg viewBox="0 0 24 24"><path d="M22 13.5c-.8 0-1.5.5-1.8 1.2l-3.2-1c.1-.4.2-.8.2-1.2 0-2.2-1.8-4-4-4-.8 0-1.5.2-2.1.6L10.5 4H8.5l1.6 4.8C9.2 9.4 8.7 10.4 8.7 11.5c0 .6.1 1.2.4 1.7L4 16v2l6-2 3 2 5-2c1.7 0 3-1.3 3-3 0-.2 0-.3-.1-.5.7-.5 1.1-1.2 1.1-2zM2 9h4v2H2zm0 4h3v2H2z"/></svg>
+          </div>
+          <!-- 6. Lightning Bolt (3.0x Max) -->
+          <div class="speed-item" data-speed="3.0" title="3.0x Máximo">
+            <svg viewBox="0 0 24 24"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>
+          </div>
+        </div>
+      </div>
+      
+      <!-- SELECT and START Buttons -->
+      <div class="meta-buttons-group">
+        <div class="pill-btn-wrap">
+          <button class="pill-btn" id="btn-select" aria-label="SELECT">SELECT</button>
+        </div>
+        <div class="pill-btn-wrap">
+          <button class="pill-btn" id="btn-start" aria-label="START">START</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Middle Row: Huge Tactile D-PAD & Ruby A/B Buttons -->
+    <div class="controls-main-row">
+      <!-- Cross D-PAD -->
+      <div class="dpad-wrapper">
+        <div class="dpad-cross" id="dpad-cross">
+          <div class="dpad-arm-v"></div>
+          <div class="dpad-arm-h"></div>
+          <div class="dpad-center"></div>
+          
+          <button class="d-btn d-btn-up" id="btn-up" aria-label="Up"></button>
+          <button class="d-btn d-btn-right" id="btn-right" aria-label="Right"></button>
+          <button class="d-btn d-btn-down" id="btn-down" aria-label="Down"></button>
+          <button class="d-btn d-btn-left" id="btn-left" aria-label="Left"></button>
+        </div>
+      </div>
+
+      <!-- Action Buttons A & B (Staggered Diagonally) -->
+      <div class="ab-buttons-container">
+        <!-- Button A (Top-Right) -->
+        <button class="action-btn btn-action-a" id="btn-a" aria-label="A (Set/Confirm)">A</button>
+        <!-- Button B (Bottom-Left) -->
+        <button class="action-btn btn-action-b" id="btn-b" aria-label="B (Rotate/Cancel)">B</button>
+      </div>
+    </div>
+
+    <!-- Bottom Row: Aux Icons & 3 Horizontal Speaker Vents -->
+    <div class="chassis-bottom-row">
+      <div class="aux-icons-left">
+        <!-- 3 Vertical Dots (Menu / Records) -->
+        <button class="aux-icon-btn" id="btn-menu" title="Menu / Recordes">
+          <svg viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        </button>
+        <!-- Save State / Reset -->
+        <button class="aux-icon-btn" id="btn-save" title="Reiniciar Fase Atual">
+          <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+        </button>
+        <!-- Load State / Palette Toggle -->
+        <button class="aux-icon-btn" id="btn-palette-icon" title="Trocar Paleta Retro">
+          <svg viewBox="0 0 24 24"><path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z"/></svg>
+        </button>
+      </div>
+
+      <!-- 3 Horizontal Pill Speaker Vents -->
+      <div class="speaker-grill">
+        <div class="speaker-vent"></div>
+        <div class="speaker-vent"></div>
+        <div class="speaker-vent"></div>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
-
-"use strict";
-
-/* =====================================================
-   PIPE CONTROL
-   1000 FASES
-
-   CONTROLES:
-
-   GIRAR:
-   botão ou tecla R
-
-   COLOCAR:
-   toque/clique
-
-   PRÓXIMA:
-   botão ou ESPAÇO
-
-   ===================================================== */
-
-
-/* =====================================================
-   CANVAS
-   ===================================================== */
-
-const canvas =
-    document.getElementById("game");
-
-const ctx =
-    canvas.getContext("2d");
-
-
-/* =====================================================
-   BOTÕES
-   ===================================================== */
-
-const rotateBtn =
-    document.getElementById("rotate");
-
-const restartBtn =
-    document.getElementById("restart");
-
-const nextBtn =
-    document.getElementById("next");
-
-const fullscreenBtn =
-    document.getElementById("fullscreen");
-
-const recordsOpen =
-    document.getElementById("recordsOpen");
-
-const recordsModal =
-    document.getElementById("recordsModal");
-
-const recordsClose =
-    document.getElementById("recordsClose");
-
-const recordsList =
-    document.getElementById("recordsList");
-
-const recordsClear =
-    document.getElementById("recordsClear");
-
-
-/* =====================================================
-   CONFIGURAÇÃO
-   ===================================================== */
-
-const TOTAL_FASES = 1000;
-
-const RECORDS_KEY = "pipeControlTop10Records";
-
-const MAX_RECORDS = 10;
-
-const LINHAS = 8;
-
-const COLUNAS = 8;
-
-const FUNDO = "#f7f7f7";
-
-const GRADE = "#dcdcdc";
-
-const ELEMENTO = "#535353";
-
-const AGUA = "#1e1e1e";
-
-
-/* =====================================================
-   DIMENSÕES
-   ===================================================== */
-
-let W =
-    window.innerWidth;
-
-let H =
-    window.innerHeight;
-
-let cell = 60;
-
-let offsetX = 0;
-
-let offsetY = 150;
-
-
-/* =====================================================
-   JOGO
-   ===================================================== */
-
-let fase = 1;
-
-let score = 0;
-
-let recorde =
-    Number(
-        localStorage.getItem(
-            "pipeControlRecorde1000"
-        ) || 0
-    );
-
-
-/* =====================================================
-   TABULEIRO
-   ===================================================== */
-
-let grade = [];
-
-let solucao = [];
-
-
-/* =====================================================
-   ENTRADA / SAÍDA
-   ===================================================== */
-
-const entrada = {
-
-    r:3,
-
-    c:0
-
-};
-
-const saida = {
-
-    r:4,
-
-    c:7
-
-};
-
-
-/* =====================================================
-   FILA DE PEÇAS
-   ===================================================== */
-
-/*
-    fila = próximas peças
-
-    canoAtual = peça que o jogador
-    está segurando agora.
-*/
-
-let fila = [];
-
-let canoAtual = null;
-
-let rotacaoAtual = 0;
-
-
-/* =====================================================
-   TEMPO
-   ===================================================== */
-
-let tempoLimite = 60;
-
-let tempoRestante = 60;
-
-
-/* =====================================================
-   ESTADO
-   ===================================================== */
-
-let canosColocados = 0;
-
-let fim = false;
-
-let venceu = false;
-
-let final = false;
-
-let agua = false;
-
-
-/* =====================================================
-   LOOP
-   ===================================================== */
-
-let ultimoTempo =
-    performance.now();
-
-
-/* =====================================================
-   RNG
-   ===================================================== */
-
-let random =
-    Math.random;
-
-function rng(seed){
-
-    let x =
-        seed >>> 0;
-
-    return function(){
-
-        x +=
-            0x6D2B79F5;
-
-        let t = x;
-
-        t =
-            Math.imul(
-                t ^ t >>> 15,
-                t | 1
-            );
-
-        t ^=
-
-            t +
-
-            Math.imul(
-                t ^ t >>> 7,
-                t | 61
-            );
-
-        return (
-
-            (
-                (t ^ t >>> 14)
-                >>> 0
-            )
-            / 4294967296
-        );
-    };
-}
-
-
-/* =====================================================
-   TIPOS DE CANOS
-   ===================================================== */
-
-const CANOS = {
-
-    "|-":{
-        N:1,
-        S:1,
-        L:0,
-        O:0
-    },
-
-    "--":{
-        N:0,
-        S:0,
-        L:1,
-        O:1
-    },
-
-    "L":{
-        N:1,
-        S:0,
-        L:1,
-        O:0
-    },
-
-    "J":{
-        N:1,
-        S:0,
-        L:0,
-        O:1
-    },
-
-    "7":{
-        N:0,
-        S:1,
-        L:0,
-        O:1
-    },
-
-    "F":{
-        N:0,
-        S:1,
-        L:1,
-        O:0
-    }
-
-};
-
-const TIPOS =
-    Object.keys(CANOS);
-
-
-/* =====================================================
-   ÁUDIO
-   ===================================================== */
-
-let audio = null;
-
-function iniciarAudio(){
-
-    if(!audio){
-
-        const AudioContext =
-            window.AudioContext ||
-            window.webkitAudioContext;
-
-        if(AudioContext){
-
-            audio =
-                new AudioContext();
-        }
-    }
-
-    if(
-        audio &&
-        audio.state === "suspended"
-    ){
-
-        audio.resume();
-    }
-}
-
-function beep(
-    frequencia,
-    duracao = .08,
-    tipo = "square"
-){
-
-    iniciarAudio();
-
-    if(!audio)
-        return;
-
-    const osc =
-        audio.createOscillator();
-
-    const gain =
-        audio.createGain();
-
-    osc.type =
-        tipo;
-
-    osc.frequency.value =
-        frequencia;
-
-    gain.gain.setValueAtTime(
-        .07,
-        audio.currentTime
-    );
-
-    gain.gain.exponentialRampToValueAtTime(
-        .001,
-        audio.currentTime +
-        duracao
-    );
-
-    osc.connect(gain);
-
-    gain.connect(
-        audio.destination
-    );
-
-    osc.start();
-
-    osc.stop(
-        audio.currentTime +
-        duracao
-    );
-}
-
-function som(tipo){
-
-    if(tipo === "click"){
-
-        beep(
-            600,
-            .05
-        );
-
-        return;
-    }
-
-    if(tipo === "rotate"){
-
-        beep(
-            760,
-            .045
-        );
-
-        return;
-    }
-
-    if(tipo === "win"){
-
-        beep(
-            523,
-            .08
-        );
-
-        setTimeout(
-            () =>
-                beep(
-                    659,
-                    .08
-                ),
-            80
-        );
-
-        setTimeout(
-            () =>
-                beep(
-                    784,
-                    .15
-                ),
-            160
-        );
-
-        return;
-    }
-
-    if(tipo === "lose"){
-
-        beep(
-            150,
-            .3
-        );
-
-        return;
-    }
-
-    if(tipo === "final"){
-
-        const notas = [
-            523,
-            587,
-            659,
-            698,
-            783,
-            880,
-            987,
-            1046
-        ];
-
-        notas.forEach(
-            (nota,i)=>{
-
-                setTimeout(
-                    () =>
-                        beep(
-                            nota,
-                            .1
-                        ),
-                    i*100
-                );
-            }
-        );
-    }
-}
-
-
-/* =====================================================
-   DIFICULDADE
-   ===================================================== */
-
-function dificuldade(f){
-
-    if(f <= 100)
-        return "FÁCIL";
-
-    if(f <= 250)
-        return "NORMAL";
-
-    if(f <= 500)
-        return "DIFÍCIL";
-
-    if(f <= 750)
-        return "MUITO DIFÍCIL";
-
-    if(f <= 900)
-        return "EXTREMA";
-
-    if(f <= 999)
-        return "LENDÁRIA";
-
-    return "DESAFIO FINAL";
-}
-
-
-/* =====================================================
-   TEMPO
-   ===================================================== */
-
-function calcularTempo(f){
-
-    if(f <= 100)
-        return 60;
-
-    if(f <= 250)
-        return 55;
-
-    if(f <= 500)
-        return 48;
-
-    if(f <= 750)
-        return 42;
-
-    if(f <= 900)
-        return 36;
-
-    if(f <= 999)
-        return 30;
-
-    return 45;
-}
-
-
-/* =====================================================
-   LAYOUT
-   ===================================================== */
-
-function resize(){
-
-    W =
-        window.innerWidth;
-
-    H =
-        window.innerHeight;
-
-
-    const dpr =
-        Math.min(
-            window.devicePixelRatio || 1,
-            2
-        );
-
-
-    canvas.width =
-        Math.floor(
-            W*dpr
-        );
-
-    canvas.height =
-        Math.floor(
-            H*dpr
-        );
-
-
-    canvas.style.width =
-        W+"px";
-
-    canvas.style.height =
-        H+"px";
-
-
-    ctx.setTransform(
-        dpr,
-        0,
-        0,
-        dpr,
-        0,
-        0
-    );
-
-
-    /*
-       Reservamos espaço:
-
-       topo
-       tabuleiro
-       comandos
-    */
-
-    const largura =
-        Math.min(
-            W-20,
-            620
-        );
-
-    const altura =
-        Math.min(
-            H-220,
-            620
-        );
-
-
-    cell =
-        Math.min(
-            largura/8,
-            altura/8
-        );
-
-
-    offsetX =
-        (W -
-        cell*8) / 2;
-
-
-    offsetY =
-        Math.max(
-            145,
-            (H -
-            cell*8) / 2
-        );
-}
-
-
-/* =====================================================
-   GRADE
-   ===================================================== */
-
-function criarGrade(){
-
-    grade =
-        Array.from(
-            {
-                length:
-                    LINHAS
-            },
-
-            () =>
-                Array(
-                    COLUNAS
-                ).fill(null)
-        );
-}
-
-
-/* =====================================================
-   FILA
-   ===================================================== */
-
-function gerarFila(){
-
-    fila = [];
-
-    for(
-        let i=0;
-        i<4;
-        i++
-    ){
-
-        fila.push(
-            TIPOS[
-                Math.floor(
-                    random() *
-                    TIPOS.length
-                )
-            ]
-        );
-    }
-}
-
-
-/*
-   Busca o próximo cano.
-
-   IMPORTANTE:
-
-   O cano não desaparece
-   da fila visual antes de
-   ser colocado.
-*/
-
-function obterCanoAtual(){
-
-    if(
-        canoAtual === null
-    ){
-
-        canoAtual =
-            fila.shift();
-
-        fila.push(
-            TIPOS[
-                Math.floor(
-                    random() *
-                    TIPOS.length
-                )
-            ]
-        );
-
-        rotacaoAtual = 0;
-    }
-
-    return canoAtual;
-}
-
-
-/* =====================================================
-   ROTAÇÃO
-   ===================================================== */
-
-function rotacionarTipo(
-    tipo,
-    vezes
-){
-
-    if(!tipo)
-        return null;
-
-    const d =
-        CANOS[tipo];
-
-    let N = d.N;
-
-    let S = d.S;
-
-    let L = d.L;
-
-    let O = d.O;
-
-
-    for(
-        let i=0;
-        i<vezes;
-        i++
-    ){
-
-        const novoN = O;
-
-        const novoL = N;
-
-        const novoS = L;
-
-        const novoO = S;
-
-        N = novoN;
-
-        L = novoL;
-
-        S = novoS;
-
-        O = novoO;
-    }
-
-
-    return Object.keys(
-        CANOS
-    ).find(
-        key =>
-
-            CANOS[key].N === N &&
-
-            CANOS[key].S === S &&
-
-            CANOS[key].L === L &&
-
-            CANOS[key].O === O
-    );
-}
-
-
-/* =====================================================
-   GIRAR
-   ===================================================== */
-
-function girarCano(){
-
-    if(fim)
-        return;
-
-    obterCanoAtual();
-
-    rotacaoAtual =
-        (
-            rotacaoAtual + 1
-        ) % 4;
-
-    som("rotate");
-
-    render();
-}
-
-
-/* =====================================================
-   GERAR SOLUÇÃO
-   ===================================================== */
-
-function gerarSolucao(){
-
-    random =
-        rng(
-            fase *
-            92821 +
-            733
-        );
-
-
-    solucao =
-        Array.from(
-            {
-                length:
-                    LINHAS
-            },
-
-            () =>
-                Array(
-                    COLUNAS
-                ).fill(null)
-        );
-
-
-    let r =
-        entrada.r;
-
-    let c =
-        entrada.c;
-
-
-    solucao[r][c] = true;
-
-
-    /*
-       Caminho base.
-
-       A partir das fases
-       avançadas adicionamos
-       pequenas variações.
-    */
-
-    while(
-        c < saida.c
-    ){
-
-        c++;
-
-        solucao[r][c] =
-            true;
-
-
-        if(
-            fase > 100 &&
-            c > 1 &&
-            c < 6 &&
-            random() < .16
-        ){
-
-            if(
-                r < LINHAS-1
-            ){
-
-                r++;
-
-                solucao[r][c] =
-                    true;
-            }
-        }
-
-        else if(
-            fase > 100 &&
-            c > 1 &&
-            c < 6 &&
-            random() < .16
-        ){
-
-            if(
-                r > 0
-            ){
-
-                r--;
-
-                solucao[r][c] =
-                    true;
-            }
-        }
-    }
-
-
-    while(
-        r < saida.r
-    ){
-
-        r++;
-
-        solucao[r][c] =
-            true;
-    }
-
-
-    while(
-        r > saida.r
-    ){
-
-        r--;
-
-        solucao[r][c] =
-            true;
-    }
-
-
-    /*
-       Converte o caminho
-       em canos.
-    */
-
-    for(
-        let rr=0;
-        rr<LINHAS;
-        rr++
-    ){
-
-        for(
-            let cc=0;
-            cc<COLUNAS;
-            cc++
-        ){
-
-            if(
-                !solucao[rr][cc]
-            )
-                continue;
-
-
-            if(
-                rr===entrada.r &&
-                cc===entrada.c
-            )
-                continue;
-
-
-            if(
-                rr===saida.r &&
-                cc===saida.c
-            )
-                continue;
-
-
-            let N=0;
-
-            let S=0;
-
-            let L=0;
-
-            let O=0;
-
-
-            if(
-                rr>0 &&
-                solucao[rr-1][cc]
-            )
-                N=1;
-
-
-            if(
-                rr<LINHAS-1 &&
-                solucao[rr+1][cc]
-            )
-                S=1;
-
-
-            if(
-                cc<COLUNAS-1 &&
-                solucao[rr][cc+1]
-            )
-                L=1;
-
-
-            if(
-                cc>0 &&
-                solucao[rr][cc-1]
-            )
-                O=1;
-
-
-            solucao[rr][cc] =
-                Object.keys(
-                    CANOS
-                ).find(
-                    key =>
-
-                        CANOS[key].N === N &&
-
-                        CANOS[key].S === S &&
-
-                        CANOS[key].L === L &&
-
-                        CANOS[key].O === O
-                ) || null;
-        }
-    }
-}
-
-
-
-/* =====================================================
-   SISTEMA DE RECORDES — TOP 10
-   ===================================================== */
-
-function normalizarNome(nome){
-
-    const limpo = String(nome || "").trim();
-
-    if(!limpo){
-        return "JOGADOR";
-    }
-
-    return limpo
-        .replace(/[<>]/g, "")
-        .slice(0, 20);
-}
-
-function carregarRanking(){
-
-    try{
-
-        const salvo =
-            localStorage.getItem(RECORDS_KEY);
-
-        if(!salvo){
-            return [];
-        }
-
-        const dados = JSON.parse(salvo);
-
-        if(!Array.isArray(dados)){
-            return [];
-        }
-
-        return dados
-            .filter(item =>
-                item &&
-                typeof item.name === "string" &&
-                Number.isFinite(Number(item.score)) &&
-                Number.isFinite(Number(item.stage))
-            )
-            .map(item => ({
-                name: normalizarNome(item.name),
-                score: Number(item.score),
-                stage: Number(item.stage),
-                date: item.date || ""
-            }))
-            .sort((a,b) => {
-                if(b.score !== a.score){
-                    return b.score - a.score;
-                }
-                return b.stage - a.stage;
-            })
-            .slice(0, MAX_RECORDS);
-
-    }catch(error){
-
-        console.warn(
-            "Não foi possível ler os recordes:",
-            error
-        );
-
-        return [];
-    }
-}
-
-function salvarRanking(ranking){
-
-    localStorage.setItem(
-        RECORDS_KEY,
-        JSON.stringify(
-            ranking.slice(0, MAX_RECORDS)
-        )
-    );
-}
-
-function estaNoTop10(novaPontuacao, novaFase){
-
-    const ranking = carregarRanking();
-
-    if(ranking.length < MAX_RECORDS){
-        return true;
-    }
-
-    const ultimo =
-        ranking[ranking.length - 1];
-
-    return (
-        novaPontuacao > ultimo.score ||
-        (
-            novaPontuacao === ultimo.score &&
-            novaFase > ultimo.stage
-        )
-    );
-}
-
-function registrarRecorde(novaPontuacao, novaFase){
-
-    if(!estaNoTop10(novaPontuacao, novaFase)){
-        return false;
-    }
-
-    let nome = window.prompt(
-        "NOVO RECORDE!\n\nDigite o nome do jogador:",
-        "JOGADOR"
-    );
-
-    if(nome === null){
-        nome = "JOGADOR";
-    }
-
-    nome = normalizarNome(nome);
-
-    const ranking = carregarRanking();
-
-    ranking.push({
-        name: nome,
-        score: Number(novaPontuacao),
-        stage: Number(novaFase),
-        date: new Date().toISOString()
-    });
-
-    ranking.sort((a,b) => {
-
-        if(b.score !== a.score){
-            return b.score - a.score;
-        }
-
-        return b.stage - a.stage;
-    });
-
-    salvarRanking(ranking);
-
-    abrirRecordes();
-
-    return true;
-}
-
-function escaparTexto(texto){
-
-    return String(texto)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
-
-function atualizarListaRecordes(){
-
-    if(!recordsList){
-        return;
-    }
-
-    const ranking = carregarRanking();
-
-    if(ranking.length === 0){
-
-        recordsList.innerHTML = `
-            <div class="records-empty">
-                NENHUM RECORDE REGISTRADO.<br><br>
-                COMPLETE UMA FASE PARA ENTRAR NO RANKING.
-            </div>
-        `;
-
-        return;
-    }
-
-    const medalhas = ["🥇", "🥈", "🥉"];
-
-    recordsList.innerHTML = ranking
-        .map((item,index) => `
-            <div class="record-item">
-
-                <div class="record-position">
-                    ${medalhas[index] || (index+1)+"º"}
-                </div>
-
-                <div>
-                    <div class="record-name">
-                        ${escaparTexto(item.name)}
-                    </div>
-
-                    <div class="record-meta">
-                        FASE ${String(item.stage).padStart(4,"0")}
-                    </div>
-                </div>
-
-                <div class="record-score">
-                    ${item.score.toLocaleString("pt-BR")}
-                </div>
-
-            </div>
-        `)
-        .join("");
-}
-
-function abrirRecordes(){
-
-    atualizarListaRecordes();
-
-    if(recordsModal){
-
-        recordsModal.classList.remove("hidden");
-
-        recordsModal.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-    }
-}
-
-function fecharRecordes(){
-
-    if(recordsModal){
-
-        recordsModal.classList.add("hidden");
-
-        recordsModal.setAttribute(
-            "aria-hidden",
-            "true"
-        );
-    }
-}
-
-if(recordsOpen){
-
-    recordsOpen.addEventListener(
-        "click",
-        ()=>{
-            iniciarAudio();
-            abrirRecordes();
-        }
-    );
-}
-
-if(recordsClose){
-
-    recordsClose.addEventListener(
-        "click",
-        ()=>{
-            fecharRecordes();
-        }
-    );
-}
-
-if(recordsClear){
-
-    recordsClear.addEventListener(
-        "click",
-        ()=>{
-
-            if(!confirm("Apagar todos os recordes?")){
-                return;
-            }
-
-            localStorage.removeItem(RECORDS_KEY);
-
-            atualizarListaRecordes();
-        }
-    );
-}
-
-if(recordsModal){
-
-    recordsModal.addEventListener(
-        "click",
-        event=>{
-
-            if(event.target === recordsModal){
-                fecharRecordes();
-            }
-        }
-    );
-}
-
-window.addEventListener(
-    "keydown",
-    event=>{
-
-        if(event.key === "Escape"){
-            fecharRecordes();
-        }
-    }
-);
-
-/* =====================================================
-   INICIAR FASE
-   ===================================================== */
-
-function iniciarFase(){
-
-    criarGrade();
-
-    gerarSolucao();
-
-    random =
-        rng(
-            fase *
-            92821 +
-            733
-        );
-
-    gerarFila();
-
-    canoAtual = null;
-
-    rotacaoAtual = 0;
-
-
-    grade[
-        entrada.r
-    ][
-        entrada.c
-    ] = "--";
-
-
-    grade[
-        saida.r
-    ][
-        saida.c
-    ] = "--";
-
-
-    tempoLimite =
-        calcularTempo(fase);
-
-    tempoRestante =
-        tempoLimite;
-
-
-    canosColocados = 0;
-
-    fim = false;
-
-    venceu = false;
-
-    final = false;
-
-    agua = false;
-
-
-    nextBtn.style.display =
-        "none";
-}
-
-
-/* =====================================================
-   CONEXÕES
-   ===================================================== */
-
-function tem(
-    cano,
-    direcao
-){
-
-    return !!(
-        cano &&
-        CANOS[cano] &&
-        CANOS[cano][direcao]
-    );
-}
-
-
-function conectado(
-    r,
-    c,
-    nr,
-    nc,
-    d1,
-    d2
-){
-
-    if(
-        nr < 0 ||
-        nr >= LINHAS ||
-        nc < 0 ||
-        nc >= COLUNAS
-    ){
-
-        return false;
-    }
-
-
-    const a =
-        grade[r][c];
-
-    const b =
-        grade[nr][nc];
-
-
-    return (
-
-        tem(a,d1) &&
-
-        tem(b,d2)
-    );
-}
-
-
-/* =====================================================
-   FLUXO
-   ===================================================== */
-
-function checarFluxo(){
-
-    const filaBusca = [
-
-        [
-            entrada.r,
-            entrada.c
-        ]
-
-    ];
-
-
-    const visitados =
-        new Set();
-
-
-    while(
-        filaBusca.length
-    ){
-
-        const atual =
-            filaBusca.shift();
-
-        const r =
-            atual[0];
-
-        const c =
-            atual[1];
-
-
-        const chave =
-            r+","+c;
-
-
-        if(
-            visitados.has(chave)
-        )
-            continue;
-
-
-        visitados.add(chave);
-
-
-        if(
-            r===saida.r &&
-            c===saida.c
-        ){
-
-            return true;
-        }
-
-
-        if(
-            conectado(
-                r,c,
-                r-1,c,
-                "N",
-                "S"
-            )
-        ){
-
-            filaBusca.push(
-                [r-1,c]
-            );
-        }
-
-
-        if(
-            conectado(
-                r,c,
-                r+1,c,
-                "S",
-                "N"
-            )
-        ){
-
-            filaBusca.push(
-                [r+1,c]
-            );
-        }
-
-
-        if(
-            conectado(
-                r,c,
-                r,c+1,
-                "L",
-                "O"
-            )
-        ){
-
-            filaBusca.push(
-                [r,c+1]
-            );
-        }
-
-
-        if(
-            conectado(
-                r,c,
-                r,c-1,
-                "O",
-                "L"
-            )
-        ){
-
-            filaBusca.push(
-                [r,c-1]
-            );
-        }
-    }
-
-
-    return false;
-}
-
-
-/* =====================================================
-   COLOCAR CANO
-   ===================================================== */
-
-function colocarCano(
-    x,
-    y
-){
-
-    if(fim)
-        return;
-
-
-    const c =
-        Math.floor(
-            (x-offsetX) /
-            cell
-        );
-
-
-    const r =
-        Math.floor(
-            (y-offsetY) /
-            cell
-        );
-
-
-    if(
-        r<0 ||
-        r>=LINHAS ||
-        c<0 ||
-        c>=COLUNAS
-    )
-        return;
-
-
-    if(
-        r===entrada.r &&
-        c===entrada.c
-    )
-        return;
-
-
-    if(
-        r===saida.r &&
-        c===saida.c
-    )
-        return;
-
-
-    if(
-        grade[r][c]
-    )
-        return;
-
-
-    obterCanoAtual();
-
-
-    const tipo =
-        rotacionarTipo(
-            canoAtual,
-            rotacaoAtual
-        );
-
-
-    grade[r][c] =
-        tipo;
-
-
-    canosColocados++;
-
-
-    /*
-       Consome somente
-       depois da colocação.
-    */
-
-    canoAtual = null;
-
-    rotacaoAtual = 0;
-
-
-    som("click");
-
-
-    if(
-        checarFluxo()
-    ){
-
-        finalizar(true);
-    }
-}
-
-
-/* =====================================================
-   FINAL
-   ===================================================== */
-
-function finalizar(resultado){
-
-    fim = true;
-
-    agua = true;
-
-    venceu = resultado;
-
-
-    if(venceu){
-
-        const bonusTempo =
-            Math.floor(
-                tempoRestante * 10
-            );
-
-
-        const bonus =
-            100 +
-            fase * 25 +
-            canosColocados * 15 +
-            bonusTempo;
-
-
-        score += bonus;
-
-
-        if(
-            score > recorde
-        ){
-
-            recorde =
-                score;
-
-            localStorage.setItem(
-                "pipeControlRecorde1000",
-                recorde
-            );
-        }
-
-
-        /*
-           Ranking com nome: verifica após o
-           cálculo definitivo da pontuação da fase.
-        */
-
-        registrarRecorde(
-            score,
-            fase
-        );
-
-        if(
-            fase === TOTAL_FASES
-        ){
-
-            final = true;
-
-            som("final");
-
-        }else{
-
-            som("win");
-
-            nextBtn.style.display =
-                "block";
-        }
-
-    }else{
-
-        som("lose");
-    }
-}
-
-
-/* =====================================================
-   DESENHAR CANO
-   ===================================================== */
-
-function desenharCano(
-    tipo,
-    x,
-    y,
-    ativo=false,
-    tamanho=cell
-){
-
-    if(!tipo)
-        return;
-
-
-    const d =
-        CANOS[tipo];
-
-
-    const cx =
-        x + tamanho/2;
-
-    const cy =
-        y + tamanho/2;
-
-
-    const ext =
-        Math.max(
-            11,
-            tamanho*.24
-        );
-
-
-    const interior =
-        Math.max(
-            4,
-            tamanho*.10
-        );
-
-
-    ctx.fillStyle =
-        ativo
-            ? AGUA
-            : ELEMENTO;
-
-
-    /*
-       CENTRO
-    */
-
-    ctx.fillRect(
-
-        cx-ext/2,
-
-        cy-ext/2,
-
-        ext,
-
-        ext
-    );
-
-
-    /*
-       NORTE
-    */
-
-    if(d.N){
-
-        ctx.fillRect(
-
-            cx-ext/2,
-
-            y,
-
-            ext,
-
-            tamanho/2
-        );
-    }
-
-
-    /*
-       SUL
-    */
-
-    if(d.S){
-
-        ctx.fillRect(
-
-            cx-ext/2,
-
-            cy,
-
-            ext,
-
-            tamanho/2
-        );
-    }
-
-
-    /*
-       LESTE
-    */
-
-    if(d.L){
-
-        ctx.fillRect(
-
-            cx,
-
-            cy-ext/2,
-
-            tamanho/2,
-
-            ext
-        );
-    }
-
-
-    /*
-       OESTE
-    */
-
-    if(d.O){
-
-        ctx.fillRect(
-
-            x,
-
-            cy-ext/2,
-
-            tamanho/2,
-
-            ext
-        );
-    }
-
-
-    /*
-       MIOLO
-    */
-
-    ctx.fillStyle =
-        ativo
-            ? AGUA
-            : FUNDO;
-
-
-    ctx.fillRect(
-
-        cx-interior/2,
-
-        cy-interior/2,
-
-        interior,
-
-        interior
-    );
-
-
-    if(d.N){
-
-        ctx.fillRect(
-
-            cx-interior/2,
-
-            y,
-
-            interior,
-
-            tamanho/2
-        );
-    }
-
-
-    if(d.S){
-
-        ctx.fillRect(
-
-            cx-interior/2,
-
-            cy,
-
-            interior,
-
-            tamanho/2
-        );
-    }
-
-
-    if(d.L){
-
-        ctx.fillRect(
-
-            cx,
-
-            cy-interior/2,
-
-            tamanho/2,
-
-            interior
-        );
-    }
-
-
-    if(d.O){
-
-        ctx.fillRect(
-
-            x,
-
-            cy-interior/2,
-
-            tamanho/2,
-
-            interior
-        );
-    }
-}
-
-
-/* =====================================================
-   TEXTO
-   ===================================================== */
-
-function texto(
-    valor,
-    x,
-    y,
-    tamanho=14,
-    alinhamento="left"
-){
-
-    ctx.fillStyle =
-        ELEMENTO;
-
-    ctx.font =
-        `bold ${tamanho}px "Courier New",monospace`;
-
-    ctx.textAlign =
-        alinhamento;
-
-    ctx.textBaseline =
-        "middle";
-
-    ctx.fillText(
-        valor,
-        x,
-        y
-    );
-}
-
-
-/* =====================================================
-   HUD NOVO
-   ===================================================== */
-
-function desenharHUD(){
-
-    /*
-       ==================================================
-       LINHA 1
-       ==================================================
-
-       SCORE        STAGE        HI
-    */
-
-    texto(
-        "SCORE:"+
-        String(score)
-            .padStart(7,"0"),
-
-        15,
-        19,
-        13
-    );
-
-
-    texto(
-        "STAGE "+
-        String(fase)
-            .padStart(4,"0")+
-        "/1000",
-
-        W/2,
-        19,
-        16,
-        "center"
-    );
-
-
-    texto(
-        "HI:"+
-        String(recorde)
-            .padStart(7,"0"),
-
-        W-15,
-        19,
-        13,
-        "right"
-    );
-
-
-    /*
-       ==================================================
-       LINHA 2
-       ==================================================
-    */
-
-    texto(
-        dificuldade(fase),
-
-        W/2,
-        41,
-        10,
-        "center"
-    );
-
-
-    /*
-       ==================================================
-       CRONÔMETRO
-       ==================================================
-    */
-
-    const barraW =
-        Math.min(
-            180,
-            W*.32
-        );
-
-    const barraH = 12;
-
-    const barraX =
-        W/2 -
-        barraW/2;
-
-    const barraY = 53;
-
-
-    ctx.strokeStyle =
-        ELEMENTO;
-
-    ctx.lineWidth = 2;
-
-
-    ctx.strokeRect(
-
-        barraX,
-
-        barraY,
-
-        barraW,
-
-        barraH
-    );
-
-
-    const progresso =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                tempoRestante /
-                tempoLimite
-            )
-        );
-
-
-    ctx.fillStyle =
-        ELEMENTO;
-
-
-    ctx.fillRect(
-
-        barraX+2,
-
-        barraY+2,
-
-        (barraW-4) *
-        progresso,
-
-        barraH-4
-    );
-
-
-    texto(
-
-        tempoRestante
-            .toFixed(1)+"s",
-
-        W/2,
-
-        73,
-
-        10,
-
-        "center"
-    );
-
-
-    /*
-       ==================================================
-       ÁREA DAS PEÇAS
-       ==================================================
-
-       [ PEÇA ATUAL ]
-                     PRÓXIMAS
-                     [ ][ ][ ][ ]
-    */
-
-
-    const areaY = 91;
-
-
-    /*
-       BLOCO DA PEÇA ATUAL
-    */
-
-    const atualSize =
-        Math.min(
-            48,
-            Math.max(
-                42,
-                W*.075
-            )
-        );
-
-
-    const atualX =
-        22;
-
-
-    const atualY =
-        areaY;
-
-
-    /*
-       Caixa externa
-    */
-
-    ctx.strokeStyle =
-        ELEMENTO;
-
-    ctx.lineWidth = 2;
-
-
-    ctx.strokeRect(
-
-        atualX,
-
-        atualY,
-
-        atualSize,
-
-        atualSize
-    );
-
-
-    /*
-       Peça atual
-    */
-
-    obterCanoAtual();
-
-
-    const tipoAtual =
-        rotacionarTipo(
-            canoAtual,
-            rotacaoAtual
-        );
-
-
-    desenharCano(
-
-        tipoAtual,
-
-        atualX,
-
-        atualY,
-
-        false,
-
-        atualSize
-    );
-
-
-    /*
-       Texto da peça atual
-    */
-
-    texto(
-
-        "ATUAL",
-
-        atualX +
-        atualSize/2,
-
-        atualY +
-        atualSize +
-        9,
-
-        8,
-
-        "center"
-    );
-
-
-    texto(
-
-        "↻ "+
-        (
-            rotacaoAtual *
-            90
-        )+"°",
-
-        atualX +
-        atualSize/2,
-
-        atualY +
-        atualSize +
-        21,
-
-        8,
-
-        "center"
-    );
-
-
-    /*
-       ==================================================
-       PRÓXIMAS PEÇAS
-       ==================================================
-    */
-
-    const mini =
-        Math.min(
-            38,
-            Math.max(
-                30,
-                W*.06
-            )
-        );
-
-
-    const gap = 7;
-
-
-    const filaLargura =
-        mini * 4 +
-        gap * 3;
-
-
-    /*
-       A fila fica sempre
-       no lado direito.
-
-       Nunca invade a peça atual.
-    */
-
-    const filaX =
-        W -
-        filaLargura -
-        18;
-
-
-    const filaY =
-        areaY +
-        5;
-
-
-    texto(
-
-        "PRÓXIMAS",
-
-        filaX +
-        filaLargura/2,
-
-        filaY -
-        8,
-
-        8,
-
-        "center"
-    );
-
-
-    fila.forEach(
-        (cano,i)=>{
-
-            const x =
-                filaX +
-                i *
-                (
-                    mini +
-                    gap
-                );
-
-
-            ctx.strokeStyle =
-                GRADE;
-
-            ctx.lineWidth = 1;
-
-
-            ctx.strokeRect(
-
-                x,
-
-                filaY,
-
-                mini,
-
-                mini
-            );
-
-
-            desenharCano(
-
-                cano,
-
-                x,
-
-                filaY,
-
-                false,
-
-                mini
-            );
-        }
-    );
-}
-
-
-/* =====================================================
-   TABULEIRO
-   ===================================================== */
-
-function desenharTabuleiro(){
-
-    for(
-        let r=0;
-        r<LINHAS;
-        r++
-    ){
-
-        for(
-            let c=0;
-            c<COLUNAS;
-            c++
-        ){
-
-            const x =
-                offsetX +
-                c*cell;
-
-            const y =
-                offsetY +
-                r*cell;
-
-
-            /*
-               GRADE
-            */
-
-            ctx.strokeStyle =
-                GRADE;
-
-            ctx.lineWidth = 1;
-
-
-            ctx.strokeRect(
-
-                x,
-
-                y,
-
-                cell,
-
-                cell
-            );
-
-
-            /*
-               ENTRADA
-            */
-
-            if(
-                r===entrada.r &&
-                c===entrada.c
-            ){
-
-                ctx.strokeStyle =
-                    ELEMENTO;
-
-                ctx.lineWidth = 3;
-
-
-                ctx.strokeRect(
-
-                    x+2,
-
-                    y+2,
-
-                    cell-4,
-
-                    cell-4
-                );
-
-
-                texto(
-
-                    "IN",
-
-                    x+
-                    cell/2,
-
-                    y+
-                    cell/2,
-
-                    9,
-
-                    "center"
-                );
-            }
-
-
-            /*
-               SAÍDA
-            */
-
-            if(
-                r===saida.r &&
-                c===saida.c
-            ){
-
-                ctx.strokeStyle =
-                    ELEMENTO;
-
-                ctx.lineWidth = 3;
-
-
-                ctx.strokeRect(
-
-                    x+2,
-
-                    y+2,
-
-                    cell-4,
-
-                    cell-4
-                );
-
-
-                texto(
-
-                    "X",
-
-                    x+
-                    cell/2,
-
-                    y+
-                    cell/2,
-
-                    14,
-
-                    "center"
-                );
-            }
-
-
-            /*
-               CANO
-            */
-
-            if(
-                grade[r][c]
-            ){
-
-                desenharCano(
-
-                    grade[r][c],
-
-                    x,
-
-                    y,
-
-                    agua &&
-                    venceu
-                );
-            }
-        }
-    }
-}
-
-
-/* =====================================================
-   FINAL DA FASE
-   ===================================================== */
-
-function desenharFinal(){
-
-    if(!fim)
-        return;
-
-
-    const altura =
-        58;
-
-
-    const y =
-        H -
-        78;
-
-
-    ctx.fillStyle =
-        FUNDO;
-
-
-    ctx.fillRect(
-
-        0,
-
-        y,
-
-        W,
-
-        altura
-    );
-
-
-    ctx.strokeStyle =
-        ELEMENTO;
-
-    ctx.lineWidth = 2;
-
-
-    ctx.strokeRect(
-
-        0,
-
-        y,
-
-        W,
-
-        altura
-    );
-
-
-    let mensagem;
-
-
-    if(final){
-
-        mensagem =
-            "VOCÊ ZEROU AS 1000 FASES!";
-
-    }
-
-    else if(venceu){
-
-        mensagem =
-            "STAGE "+
-            String(fase)
-                .padStart(4,"0")+
-            " CLEAR!";
-
-    }
-
-    else{
-
-        mensagem =
-            "GAME OVER!";
-    }
-
-
-    texto(
-
-        mensagem,
-
-        W/2,
-
-        y+20,
-
-        W<600
-            ? 11
-            : 16,
-
-        "center"
-    );
-
-
-    if(final){
-
-        texto(
-
-            "DESAFIO COMPLETO!",
-
-            W/2,
-
-            y+40,
-
-            9,
-
-            "center"
-        );
-
-    }
-
-    else if(venceu){
-
-        texto(
-
-            "USE PRÓXIMA PARA CONTINUAR",
-
-            W/2,
-
-            y+40,
-
-            9,
-
-            "center"
-        );
-
-    }
-
-    else{
-
-        texto(
-
-            "USE REINICIAR PARA TENTAR NOVAMENTE",
-
-            W/2,
-
-            y+40,
-
-            8,
-
-            "center"
-        );
-    }
-}
-
-
-/* =====================================================
-   RENDER
-   ===================================================== */
-
-function render(){
-
-    ctx.clearRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    ctx.fillStyle =
-        FUNDO;
-
-
-    ctx.fillRect(
-        0,
-        0,
-        W,
-        H
-    );
-
-
-    desenharHUD();
-
-    desenharTabuleiro();
-
-    desenharFinal();
-}
-
-
-/* =====================================================
-   LOOP
-   ===================================================== */
-
-function loop(agora){
-
-    const dt =
-        Math.min(
-            (agora -
-            ultimoTempo) /
-            1000,
-
-            .1
-        );
-
-
-    ultimoTempo =
-        agora;
-
-
-    if(!fim){
-
-        tempoRestante -=
-            dt;
-
-
-        if(
-            tempoRestante <= 0
-        ){
-
-            tempoRestante = 0;
-
-
-            if(
-                checarFluxo()
-            ){
-
-                finalizar(true);
-
-            }
-
-            else{
-
-                finalizar(false);
-            }
-        }
-    }
-
-
-    render();
-
-
-    requestAnimationFrame(
-        loop
-    );
-}
-
-
-/* =====================================================
-   CONTROLE GIRAR
-   ===================================================== */
-
-rotateBtn.addEventListener(
-    "click",
-    ()=>{
-
-        iniciarAudio();
-
-        girarCano();
-    }
-);
-
-
-/* =====================================================
-   REINICIAR
-   ===================================================== */
-
-restartBtn.addEventListener(
-    "click",
-    ()=>{
-
-        iniciarAudio();
-
-        iniciarFase();
-    }
-);
-
-
-/* =====================================================
-   PRÓXIMA
-   ===================================================== */
-
-nextBtn.addEventListener(
-    "click",
-    ()=>{
-
-        iniciarAudio();
-
-        if(
-            !fim ||
-            !venceu ||
-            fase>=TOTAL_FASES
-        ){
-
-            return;
-        }
-
-
-        fase++;
-
-        iniciarFase();
-    }
-);
-
-
-/* =====================================================
-   FULLSCREEN
-   ===================================================== */
-
-fullscreenBtn.addEventListener(
-    "click",
-    async ()=>{
-
-        iniciarAudio();
-
-        try{
-
-            if(
-                !document.fullscreenElement
-            ){
-
-                await document
-                    .documentElement
-                    .requestFullscreen();
-
-            }
-
-            else{
-
-                await document
-                    .exitFullscreen();
-            }
-
-        }
-
-        catch(error){
-
-            console.warn(
-                "Fullscreen indisponível",
-                error
-            );
-        }
-    }
-);
-
-
-/* =====================================================
-   TOUCH / MOUSE
-   ===================================================== */
-
-canvas.addEventListener(
-    "pointerdown",
-    event=>{
-
-        event.preventDefault();
-
-        iniciarAudio();
-
-        colocarCano(
-
-            event.clientX,
-
-            event.clientY
-        );
-    }
-);
-
-
-/* =====================================================
-   TECLADO
-   ===================================================== */
-
-window.addEventListener(
-    "keydown",
-    event=>{
-
-        /*
-           R = GIRAR
-        */
-
-        if(
-            event.key.toLowerCase()
-            === "r"
-        ){
-
-            event.preventDefault();
-
-            iniciarAudio();
-
-            girarCano();
-
-            return;
-        }
-
-
-        /*
-           ESPAÇO
-        */
-
-        if(
-            event.code === "Space"
-        ){
-
-            event.preventDefault();
-
-            iniciarAudio();
-
-
-            if(!fim)
-                return;
-
-
-            if(venceu){
-
-                if(
-                    fase <
-                    TOTAL_FASES
-                ){
-
-                    fase++;
-
-                    iniciarFase();
-                }
-
-            }
-
-            else{
-
-                iniciarFase();
-            }
-        }
-    }
-);
-
-
-/* =====================================================
-   FULLSCREEN CHANGE
-   ===================================================== */
-
-document.addEventListener(
-    "fullscreenchange",
-    ()=>{
-
-        fullscreenBtn.textContent =
-
-            document.fullscreenElement
-
-                ? "⛶ SAIR"
-
-                : "⛶ TELA INTEIRA";
-
-
-        setTimeout(
-            resize,
-            100
-        );
-    }
-);
-
-
-/* =====================================================
-   INICIALIZAÇÃO
-   ===================================================== */
-
-resize();
-
-iniciarFase();
-
-requestAnimationFrame(
-    loop
-);
-
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js")
-      .then(() => console.log("Pipe Control PWA: Service Worker ativo"))
-      .catch(err => console.error("Pipe Control PWA:", err));
+/**
+ * ============================================================================
+ * PIPE BOY / PIPE CONTROL — RETRO GAME ENGINE (160x144)
+ * 100% Native Pure HTML5 Canvas + Web Audio Synthesizer
+ * 1000 Solvable Progressive Stages + Multiple Palette Modes + Speed Multiplier
+ * ============================================================================
+ */
+(function() {
+  "use strict";
+
+  const canvas = document.getElementById("gb-canvas");
+  const ctx = canvas.getContext("2d", { alpha: false });
+
+  // Tela cheia: toque duplo na carcaça solicita Fullscreen quando suportado.
+  const skin = document.getElementById("emulator-skin");
+  let lastSkinTap = 0;
+  skin.addEventListener("dblclick", async () => {
+    try {
+      if (!document.fullscreenElement && skin.requestFullscreen) {
+        await skin.requestFullscreen();
+      } else if (document.fullscreenElement && document.exitFullscreen) {
+        await document.exitFullscreen();
+      }
+    } catch (e) {}
   });
-}
-</script>
+  ctx.imageSmoothingEnabled = false;
 
-<script>
-(function(){
- const skin=document.getElementById('emulator-skin');
- if(!skin) return;
- const select=document.getElementById('btn-select');
- if(select){select.addEventListener('click',async()=>{try{if(!document.fullscreenElement&&skin.requestFullscreen)await skin.requestFullscreen();else if(document.fullscreenElement)await document.exitFullscreen()}catch(e){}})}
- document.addEventListener('dblclick',async()=>{try{if(!document.fullscreenElement&&skin.requestFullscreen)await skin.requestFullscreen()}catch(e){}});
+  // Palettes
+  const PALETTES = [
+    { name: "DMG-01", c0: "#0f380f", c1: "#306230", c2: "#8bac0f", c3: "#9bbc0f", bodyClass: "" },
+    { name: "OLED B&W", c0: "#050505", c1: "#363a40", c2: "#8c939e", c3: "#edf0f5", bodyClass: "theme-oled" },
+    { name: "POCKET",  c0: "#1b2019", c1: "#51624b", c2: "#8da47f", c3: "#c9dbc0", bodyClass: "theme-pocket" },
+    { name: "AMBER",   c0: "#261600", c1: "#784805", c2: "#d68910", c3: "#f9e79f", bodyClass: "theme-amber" }
+  ];
+
+  let currentPaletteIndex = 0;
+  let C_DARKEST = PALETTES[0].c0;
+  let C_DARK    = PALETTES[0].c1;
+  let C_LIGHT   = PALETTES[0].c2;
+  let C_LIGHTEST= PALETTES[0].c3;
+
+  function switchPalette(idx) {
+    currentPaletteIndex = (idx !== undefined) ? idx : (currentPaletteIndex + 1) % PALETTES.length;
+    const p = PALETTES[currentPaletteIndex];
+    C_DARKEST = p.c0;
+    C_DARK    = p.c1;
+    C_LIGHT   = p.c2;
+    C_LIGHTEST= p.c3;
+
+    document.body.className = p.bodyClass;
+    sfxMove();
+  }
+
+  // Game Dimensions
+  const GB_W = 160;
+  const GB_H = 144;
+  const BOARD_ROWS = 8;
+  const BOARD_COLS = 8;
+  const TILE_SIZE = 13;
+  const BOARD_X = 2;
+  const BOARD_Y = 24;
+
+  const IN_POS = { r: 3, c: 0 };
+  const OUT_POS = { r: 4, c: 7 };
+
+  const TOTAL_STAGES = 1000;
+
+  // Game States
+  const STATE_TITLE = 0;
+  const STATE_PLAYING = 1;
+  const STATE_FLOW = 2;
+  const STATE_STAGE_CLEAR = 3;
+  const STATE_GAME_OVER = 4;
+  const STATE_CONGRATS = 5;
+  const STATE_RANKING = 6;
+  const STATE_NAME_ENTRY = 7;
+  const STATE_PAUSED = 8;
+
+  let gameState = STATE_TITLE;
+  let stage = 1;
+  let score = 0;
+  let hiScore = 0;
+  let timeLimit = 60;
+  let timeRemaining = 60;
+  let cursor = { r: 3, c: 1 };
+  let board = [];
+  let queue = [];
+  let currentPipe = "V";
+  let currentRotation = 0;
+  let pipesPlacedCount = 0;
+
+  // Speed Multiplier (0.5x, 0.75x, 1.0x, 1.5x, 2.0x, 3.0x)
+  let speedMultiplier = 1.0;
+
+  // Flow State
+  let flowPath = [];
+  let flowIndex = 0;
+  let flowTickTimer = 0;
+
+  // Animation Timers
+  let blinkTimer = 0;
+  let lastTimestamp = performance.now();
+  let screenPowerOn = true;
+
+  // Hall of Fame
+  const LOCAL_STORAGE_KEY = "GB_PIPE_CONTROL_TOP10";
+  const LOCAL_STORAGE_HI_KEY = "GB_PIPE_CONTROL_HI";
+
+  let highScores = [
+    { name: "DMG", score: 50000, stage: 50 },
+    { name: "NIN", score: 40000, stage: 40 },
+    { name: "PIP", score: 32000, stage: 32 },
+    { name: "BOY", score: 25000, stage: 25 },
+    { name: "RET", score: 18000, stage: 18 },
+    { name: "WAT", score: 12000, stage: 12 },
+    { name: "FLO", score: 8000,  stage: 8  },
+    { name: "MAX", score: 5000,  stage: 5  },
+    { name: "NES", score: 3000,  stage: 3  },
+    { name: "AAA", score: 1000,  stage: 1  }
+  ];
+
+  function loadSavedScores() {
+    try {
+      const savedHi = localStorage.getItem(LOCAL_STORAGE_HI_KEY);
+      if (savedHi) hiScore = parseInt(savedHi, 10) || 0;
+      const savedTop10 = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (savedTop10) {
+        const parsed = JSON.parse(savedTop10);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          highScores = parsed;
+          if (highScores[0].score > hiScore) hiScore = highScores[0].score;
+        }
+      }
+    } catch(e) {}
+  }
+
+  function saveHighScores() {
+    try {
+      localStorage.setItem(LOCAL_STORAGE_HI_KEY, hiScore.toString());
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(highScores));
+    } catch(e) {}
+  }
+
+  loadSavedScores();
+
+  let nameEntryInput = ["A", "A", "A"];
+  let nameEntryCharIndex = 0;
+
+  // ==========================================================================
+  // RETRO 4x5 BITMAP MONOSPACE FONT
+  // ==========================================================================
+  const FONT_MAP = {
+    'A': [0x6, 0x9, 0xF, 0x9, 0x9],
+    'B': [0xE, 0x9, 0xE, 0x9, 0xE],
+    'C': [0x6, 0x9, 0x1, 0x9, 0x6],
+    'D': [0xE, 0x9, 0x9, 0x9, 0xE],
+    'E': [0xF, 0x1, 0xF, 0x1, 0xF],
+    'F': [0xF, 0x1, 0xE, 0x1, 0x1],
+    'G': [0x6, 0x9, 0xD, 0x9, 0x6],
+    'H': [0x9, 0x9, 0xF, 0x9, 0x9],
+    'I': [0x7, 0x2, 0x2, 0x2, 0x7],
+    'J': [0x7, 0x4, 0x4, 0x5, 0x2],
+    'K': [0x9, 0xA, 0xC, 0xA, 0x9],
+    'L': [0x1, 0x1, 0x1, 0x1, 0xF],
+    'M': [0x9, 0xF, 0x9, 0x9, 0x9],
+    'N': [0x9, 0xB, 0xD, 0x9, 0x9],
+    'O': [0x6, 0x9, 0x9, 0x9, 0x6],
+    'P': [0xE, 0x9, 0xE, 0x1, 0x1],
+    'Q': [0x6, 0x9, 0x9, 0xB, 0x6],
+    'R': [0xE, 0x9, 0xE, 0xA, 0x9],
+    'S': [0x6, 0x1, 0x6, 0x8, 0x7],
+    'T': [0x7, 0x2, 0x2, 0x2, 0x2],
+    'U': [0x9, 0x9, 0x9, 0x9, 0x6],
+    'V': [0x9, 0x9, 0x9, 0x6, 0x2],
+    'W': [0x9, 0x9, 0x9, 0xF, 0x9],
+    'X': [0x9, 0x6, 0x2, 0x6, 0x9],
+    'Y': [0x5, 0x5, 0x2, 0x2, 0x2],
+    'Z': [0xF, 0x8, 0x6, 0x1, 0xF],
+    '0': [0x6, 0x9, 0x9, 0x9, 0x6],
+    '1': [0x2, 0x6, 0x2, 0x2, 0x7],
+    '2': [0x6, 0x8, 0x6, 0x1, 0xF],
+    '3': [0x6, 0x8, 0x6, 0x8, 0x6],
+    '4': [0x9, 0x9, 0xF, 0x8, 0x8],
+    '5': [0xF, 0x1, 0xE, 0x8, 0x7],
+    '6': [0x6, 0x1, 0xE, 0x9, 0x6],
+    '7': [0xF, 0x8, 0x4, 0x2, 0x2],
+    '8': [0x6, 0x9, 0x6, 0x9, 0x6],
+    '9': [0x6, 0x9, 0xE, 0x8, 0x6],
+    ' ': [0x0, 0x0, 0x0, 0x0, 0x0],
+    ':': [0x0, 0x2, 0x0, 0x2, 0x0],
+    '.': [0x0, 0x0, 0x0, 0x0, 0x2],
+    '!': [0x2, 0x2, 0x2, 0x0, 0x2],
+    '?': [0x6, 0x8, 0x4, 0x0, 0x2],
+    '-': [0x0, 0x0, 0x6, 0x0, 0x0],
+    '/': [0x8, 0x4, 0x2, 0x1, 0x0],
+    '>': [0x1, 0x2, 0x4, 0x2, 0x1],
+    '<': [0x4, 0x2, 0x1, 0x2, 0x4],
+    '=': [0x0, 0x6, 0x0, 0x6, 0x0]
+  };
+
+  function drawPixelChar(char, x, y, color = C_DARKEST) {
+    const glyph = FONT_MAP[char.toUpperCase()] || FONT_MAP[' '];
+    ctx.fillStyle = color;
+    for (let r = 0; r < 5; r++) {
+      const rowBits = glyph[r];
+      for (let c = 0; c < 4; c++) {
+        if ((rowBits >> c) & 1) {
+          ctx.fillRect(x + c, y + r, 1, 1);
+        }
+      }
+    }
+  }
+
+  function drawPixelText(str, x, y, color = C_DARKEST) {
+    const text = String(str);
+    for (let i = 0; i < text.length; i++) {
+      drawPixelChar(text[i], x + i * 5, y, color);
+    }
+  }
+
+  // ==========================================================================
+  // WEB AUDIO SYNTHESIZER (RETRO CHIPTUNE SOUND EFFECTS)
+  // ==========================================================================
+  let audioCtx = null;
+
+  function initAudio() {
+    if (!audioCtx) {
+      const AudioClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioClass) audioCtx = new AudioClass();
+    }
+    if (audioCtx && audioCtx.state === "suspended") {
+      audioCtx.resume();
+    }
+  }
+
+  function playTone(freq, duration, type = "square", startVol = 0.08, endVol = 0.001) {
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(startVol, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(endVol, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    } catch(e) {}
+  }
+
+  function sfxMove() { playTone(480, 0.035, "square", 0.05); }
+
+  function sfxRotate() {
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "square";
+      osc.frequency.setValueAtTime(580, now);
+      osc.frequency.setValueAtTime(840, now + 0.04);
+      gain.gain.setValueAtTime(0.06, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(now + 0.08);
+    } catch(e) {}
+  }
+
+  function sfxPlace() { playTone(220, 0.06, "square", 0.08); }
+  function sfxError() { playTone(130, 0.12, "square", 0.08); }
+
+  function sfxWaterStep() {
+    initAudio();
+    if (!audioCtx) return;
+    try {
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = "triangle";
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.linearRampToValueAtTime(640, now + 0.05);
+      gain.gain.setValueAtTime(0.09, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(now + 0.07);
+    } catch(e) {}
+  }
+
+  function sfxStageClear() {
+    initAudio();
+    if (!audioCtx) return;
+    const notes = [
+      { f: 523.25, d: 0.08, t: 0.00 },
+      { f: 659.25, d: 0.08, t: 0.09 },
+      { f: 783.99, d: 0.08, t: 0.18 },
+      { f: 1046.5, d: 0.22, t: 0.27 }
+    ];
+    notes.forEach(n => {
+      setTimeout(() => playTone(n.f, n.d, "square", 0.08), n.t * 1000);
+    });
+  }
+
+  function sfxGameOver() {
+    initAudio();
+    if (!audioCtx) return;
+    const notes = [
+      { f: 440, d: 0.12, t: 0.00 },
+      { f: 415, d: 0.12, t: 0.13 },
+      { f: 392, d: 0.12, t: 0.26 },
+      { f: 349, d: 0.28, t: 0.39 }
+    ];
+    notes.forEach(n => {
+      setTimeout(() => playTone(n.f, n.d, "square", 0.09), n.t * 1000);
+    });
+  }
+
+  function sfxTitle() {
+    initAudio();
+    if (!audioCtx) return;
+    const notes = [
+      { f: 523, d: 0.06, t: 0.00 },
+      { f: 659, d: 0.06, t: 0.07 },
+      { f: 784, d: 0.14, t: 0.14 }
+    ];
+    notes.forEach(n => {
+      setTimeout(() => playTone(n.f, n.d, "square", 0.07), n.t * 1000);
+    });
+  }
+
+  function sfxPause() {
+    playTone(720, 0.05, "square", 0.06);
+    setTimeout(() => playTone(920, 0.05, "square", 0.06), 60);
+  }
+
+  // ==========================================================================
+  // PIPE TOPOLOGY & ROTATION
+  // ==========================================================================
+  const PIPE_DIRECTIONS = {
+    "V": { N: 1, S: 1, E: 0, W: 0 },
+    "H": { N: 0, S: 0, E: 1, W: 1 },
+    "L": { N: 1, S: 0, E: 1, W: 0 },
+    "J": { N: 1, S: 0, E: 0, W: 1 },
+    "7": { N: 0, S: 1, E: 0, W: 1 },
+    "F": { N: 0, S: 1, E: 1, W: 0 }
+  };
+
+  const PIPE_TYPES = ["V", "H", "L", "J", "7", "F"];
+
+  const ROTATE_MAP = {
+    "V": "H", "H": "V",
+    "L": "F", "F": "7",
+    "7": "J", "J": "L"
+  };
+
+  function rotatePipe(type, times = 1) {
+    let t = type;
+    for (let i = 0; i < (times % 4); i++) {
+      t = ROTATE_MAP[t] || t;
+    }
+    return t;
+  }
+
+  // ==========================================================================
+  // DETERMINISTIC 1000 STAGE GENERATOR
+  // ==========================================================================
+  function createPRNG(seed) {
+    let s = (seed >>> 0) || 1;
+    return function() {
+      s |= 0;
+      s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function getDifficultyTier(stg) {
+    if (stg <= 100) return { name: "FACIL", minLen: 6, maxLen: 10, time: 60 };
+    if (stg <= 250) return { name: "NORMAL", minLen: 9, maxLen: 15, time: 55 };
+    if (stg <= 500) return { name: "DIFICIL", minLen: 14, maxLen: 22, time: 48 };
+    if (stg <= 750) return { name: "M.DIFICIL", minLen: 18, maxLen: 28, time: 42 };
+    if (stg <= 900) return { name: "EXTREMA", minLen: 22, maxLen: 34, time: 36 };
+    if (stg <= 999) return { name: "MESTRE", minLen: 26, maxLen: 38, time: 30 };
+    return { name: "FINAL", minLen: 32, maxLen: 46, time: 45 };
+  }
+
+  function generateStage(stageNum) {
+    const rng = createPRNG(stageNum * 91009 + 48271);
+    const tier = getDifficultyTier(stageNum);
+    timeLimit = tier.time;
+    timeRemaining = timeLimit;
+
+    board = Array.from({ length: BOARD_ROWS }, () => 
+      Array.from({ length: BOARD_COLS }, () => null)
+    );
+
+    board[IN_POS.r][IN_POS.c] = { type: "H", fixed: true, hasWater: false };
+    board[OUT_POS.r][OUT_POS.c] = { type: "H", fixed: true, hasWater: false };
+
+    let path = [{ r: IN_POS.r, c: IN_POS.c }];
+    let visited = new Set();
+    visited.add(`${IN_POS.r},${IN_POS.c}`);
+
+    let currR = IN_POS.r;
+    let currC = IN_POS.c + 1;
+    path.push({ r: currR, c: currC });
+    visited.add(`${currR},${currC}`);
+
+    let attempts = 0;
+    while (attempts++ < 300) {
+      if (currR === OUT_POS.r && currC === OUT_POS.c - 1) {
+        path.push({ r: OUT_POS.r, c: OUT_POS.c });
+        break;
+      }
+
+      const candidates = [];
+      const deltas = [
+        { dr: 0, dc: 1 },
+        { dr: 1, dc: 0 },
+        { dr: -1, dc: 0 },
+        { dr: 0, dc: -1 }
+      ];
+
+      for (const d of deltas) {
+        const nr = currR + d.dr;
+        const nc = currC + d.dc;
+        if (nr >= 0 && nr < BOARD_ROWS && nc >= 0 && nc < BOARD_COLS) {
+          if (!visited.has(`${nr},${nc}`) && !(nr === OUT_POS.r && nc === OUT_POS.c)) {
+            let weight = (d.dc > 0 ? 3 : 1);
+            if (stageNum > 100 && (d.dr !== 0)) weight += 2;
+            candidates.push({ r: nr, c: nc, weight });
+          }
+        }
+      }
+
+      if (candidates.length === 0) {
+        if (path.length > 2) {
+          const popped = path.pop();
+          visited.delete(`${popped.r},${popped.c}`);
+          currR = path[path.length - 1].r;
+          currC = path[path.length - 1].c;
+          continue;
+        } else {
+          currR = IN_POS.r;
+          currC = IN_POS.c + 1;
+          path = [{ r: IN_POS.r, c: IN_POS.c }, { r: currR, c: currC }];
+          visited.clear();
+          visited.add(`${IN_POS.r},${IN_POS.c}`);
+          visited.add(`${currR},${currC}`);
+          continue;
+        }
+      }
+
+      const totalWeight = candidates.reduce((sum, c) => sum + c.weight, 0);
+      let randVal = rng() * totalWeight;
+      let nextStep = candidates[0];
+      for (const cand of candidates) {
+        if (randVal < cand.weight) {
+          nextStep = cand;
+          break;
+        }
+        randVal -= cand.weight;
+      }
+
+      currR = nextStep.r;
+      currC = nextStep.c;
+      path.push({ r: currR, c: currC });
+      visited.add(`${currR},${currC}`);
+    }
+
+    if (path[path.length - 1].r !== OUT_POS.r || path[path.length - 1].c !== OUT_POS.c) {
+      path.push({ r: OUT_POS.r, c: OUT_POS.c });
+    }
+
+    const neededPipes = [];
+    for (let i = 1; i < path.length - 1; i++) {
+      const prev = path[i - 1];
+      const cur = path[i];
+      const next = path[i + 1];
+
+      let N = 0, S = 0, E = 0, W = 0;
+      if (prev.r < cur.r || next.r < cur.r) N = 1;
+      if (prev.r > cur.r || next.r > cur.r) S = 1;
+      if (prev.c > cur.c || next.c > cur.c) E = 1;
+      if (prev.c < cur.c || next.c < cur.c) W = 1;
+
+      for (const type of PIPE_TYPES) {
+        const d = PIPE_DIRECTIONS[type];
+        if (d.N === N && d.S === S && d.E === E && d.W === W) {
+          neededPipes.push(type);
+          break;
+        }
+      }
+    }
+
+    queue = [];
+    const pool = [...neededPipes];
+    const distractorsCount = Math.min(16, 4 + Math.floor(stageNum / 70));
+    for (let i = 0; i < distractorsCount; i++) {
+      pool.push(PIPE_TYPES[Math.floor(rng() * PIPE_TYPES.length)]);
+    }
+
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      const temp = pool[i];
+      pool[i] = pool[j];
+      pool[j] = temp;
+    }
+
+    queue = pool;
+    if (queue.length < 5) {
+      while (queue.length < 10) {
+        queue.push(PIPE_TYPES[Math.floor(rng() * PIPE_TYPES.length)]);
+      }
+    }
+
+    currentPipe = queue.shift();
+    currentRotation = 0;
+    pipesPlacedCount = 0;
+  }
+
+  // ==========================================================================
+  // FLOW SOLVER & CHECKER
+  // ==========================================================================
+  function checkFlowPath() {
+    const queueSearch = [[IN_POS.r, IN_POS.c]];
+    const visited = new Set();
+    const parentMap = new Map();
+
+    const startKey = `${IN_POS.r},${IN_POS.c}`;
+    visited.add(startKey);
+
+    while (queueSearch.length > 0) {
+      const [r, c] = queueSearch.shift();
+      const curKey = `${r},${c}`;
+
+      if (r === OUT_POS.r && c === OUT_POS.c) {
+        const fullPath = [];
+        let backtrack = curKey;
+        while (backtrack) {
+          const [br, bc] = backtrack.split(",").map(Number);
+          fullPath.unshift({ r: br, c: bc });
+          backtrack = parentMap.get(backtrack);
+        }
+        return fullPath;
+      }
+
+      const curCell = board[r][c];
+      if (!curCell || !curCell.type) continue;
+      const curDir = PIPE_DIRECTIONS[curCell.type];
+
+      const neighbors = [
+        { dr: -1, dc: 0, myD: "N", oppD: "S" },
+        { dr: 1, dc: 0,  myD: "S", oppD: "N" },
+        { dr: 0, dc: 1,  myD: "E", oppD: "W" },
+        { dr: 0, dc: -1, myD: "W", oppD: "E" }
+      ];
+
+      for (const n of neighbors) {
+        const nr = r + n.dr;
+        const nc = c + n.dc;
+        const neighborKey = `${nr},${nc}`;
+
+        if (nr >= 0 && nr < BOARD_ROWS && nc >= 0 && nc < BOARD_COLS) {
+          if (!visited.has(neighborKey)) {
+            const neighborCell = board[nr][nc];
+            if (neighborCell && neighborCell.type) {
+              const neighborDir = PIPE_DIRECTIONS[neighborCell.type];
+              if (curDir[n.myD] === 1 && neighborDir[n.oppD] === 1) {
+                visited.add(neighborKey);
+                parentMap.set(neighborKey, curKey);
+                queueSearch.push([nr, nc]);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return null;
+  }
+
+  // ==========================================================================
+  // PIXEL ART SPRITES (160x144)
+  // ==========================================================================
+  function drawPipeSprite(type, x, y, hasWater = false, mini = false) {
+    const size = mini ? 10 : TILE_SIZE;
+    const d = PIPE_DIRECTIONS[type];
+    if (!d) return;
+
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(x, y, size, size);
+
+    if (mini) {
+      const cx = x + 5;
+      const cy = y + 5;
+      ctx.fillStyle = hasWater ? C_DARKEST : C_DARK;
+      ctx.fillRect(cx - 2, cy - 2, 4, 4);
+      if (d.N) ctx.fillRect(cx - 2, y, 4, 5);
+      if (d.S) ctx.fillRect(cx - 2, cy, 4, 5);
+      if (d.E) ctx.fillRect(cx, cy - 2, 5, 4);
+      if (d.W) ctx.fillRect(x, cy - 2, 5, 4);
+
+      ctx.fillStyle = hasWater ? C_DARKEST : C_LIGHTEST;
+      ctx.fillRect(cx - 1, cy - 1, 2, 2);
+      if (d.N) ctx.fillRect(cx - 1, y, 2, 5);
+      if (d.S) ctx.fillRect(cx - 1, cy, 2, 5);
+      if (d.E) ctx.fillRect(cx, cy - 1, 5, 2);
+      if (d.W) ctx.fillRect(x, cy - 1, 5, 2);
+      return;
+    }
+
+    const cx = x + 6;
+    const cy = y + 6;
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(cx - 3, cy - 3, 7, 7);
+    if (d.N) ctx.fillRect(cx - 3, y, 7, 6);
+    if (d.S) ctx.fillRect(cx - 3, cy + 1, 7, 6);
+    if (d.E) ctx.fillRect(cx + 1, cy - 3, 6, 7);
+    if (d.W) ctx.fillRect(x, cy - 3, 6, 7);
+
+    ctx.fillStyle = hasWater ? C_DARK : C_LIGHT;
+    ctx.fillRect(cx - 2, cy - 2, 5, 5);
+    if (d.N) ctx.fillRect(cx - 2, y, 5, 6);
+    if (d.S) ctx.fillRect(cx - 2, cy + 1, 5, 6);
+    if (d.E) ctx.fillRect(cx + 1, cy - 2, 6, 5);
+    if (d.W) ctx.fillRect(x, cy - 2, 6, 5);
+
+    ctx.fillStyle = hasWater ? C_DARKEST : C_LIGHTEST;
+    ctx.fillRect(cx - 1, cy - 1, 3, 3);
+    if (d.N) ctx.fillRect(cx - 1, y, 3, 6);
+    if (d.S) ctx.fillRect(cx - 1, cy + 1, 3, 6);
+    if (d.E) ctx.fillRect(cx + 1, cy - 1, 6, 3);
+    if (d.W) ctx.fillRect(x, cy - 1, 6, 3);
+
+    ctx.fillStyle = C_DARKEST;
+    if (d.N) ctx.fillRect(cx - 4, y, 9, 1);
+    if (d.S) ctx.fillRect(cx - 4, y + size - 1, 9, 1);
+    if (d.W) ctx.fillRect(x, cy - 4, 1, 9);
+    if (d.E) ctx.fillRect(x + size - 1, cy - 4, 1, 9);
+
+    if (hasWater && ((blinkTimer % 20) < 10)) {
+      ctx.fillStyle = C_LIGHT;
+      ctx.fillRect(cx, cy, 1, 1);
+    }
+  }
+
+  // ==========================================================================
+  // RENDERING SCREENS
+  // ==========================================================================
+  function renderHUD() {
+    drawPixelText("PIPE", 3, 2, C_DARKEST);
+    drawPixelText("HI:" + String(hiScore).padStart(6, "0"), 95, 2, C_DARK);
+
+    drawPixelText("SC:" + String(score).padStart(6, "0"), 3, 9, C_DARKEST);
+    drawPixelText("ST:" + String(stage).padStart(3, "0"), 95, 9, C_DARKEST);
+
+    drawPixelText("TIME:", 3, 16, C_DARKEST);
+    
+    const barX = 32;
+    const barY = 16;
+    const barW = 54;
+    const barH = 5;
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(barX, barY, barW, barH);
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(barX + 1, barY + 1, barW - 2, barH - 2);
+
+    const timeRatio = Math.max(0, Math.min(1, timeRemaining / timeLimit));
+    const fillW = Math.floor((barW - 2) * timeRatio);
+    ctx.fillStyle = (timeRemaining < 10 && (blinkTimer % 16 < 8)) ? C_LIGHT : C_DARK;
+    ctx.fillRect(barX + 1, barY + 1, fillW, barH - 2);
+
+    drawPixelText(String(Math.ceil(timeRemaining)).padStart(2, "0") + "S", 95, 16, C_DARKEST);
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(0, 22, GB_W, 1);
+  }
+
+  function renderBoard() {
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(BOARD_X - 1, BOARD_Y - 1, BOARD_COLS * TILE_SIZE + 2, BOARD_ROWS * TILE_SIZE + 2);
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(BOARD_X, BOARD_Y, BOARD_COLS * TILE_SIZE, BOARD_ROWS * TILE_SIZE);
+
+    for (let r = 0; r < BOARD_ROWS; r++) {
+      for (let c = 0; c < BOARD_COLS; c++) {
+        const x = BOARD_X + c * TILE_SIZE;
+        const y = BOARD_Y + r * TILE_SIZE;
+
+        ctx.fillStyle = C_LIGHT;
+        ctx.fillRect(x, y, TILE_SIZE, 1);
+        ctx.fillRect(x, y, 1, TILE_SIZE);
+
+        const cell = board[r][c];
+        if (cell && cell.type) {
+          drawPipeSprite(cell.type, x, y, cell.hasWater, false);
+        }
+
+        if (r === IN_POS.r && c === IN_POS.c) {
+          ctx.fillStyle = C_DARKEST;
+          ctx.fillRect(x, y + 1, 3, TILE_SIZE - 2);
+          drawPixelText("I", x + 1, y + 2, C_LIGHTEST);
+          drawPixelText("N", x + 1, y + 7, C_LIGHTEST);
+        }
+
+        if (r === OUT_POS.r && c === OUT_POS.c) {
+          ctx.fillStyle = C_DARKEST;
+          ctx.fillRect(x + TILE_SIZE - 3, y + 1, 3, TILE_SIZE - 2);
+          drawPixelText("X", x + TILE_SIZE - 6, y + 4, C_DARKEST);
+        }
+      }
+    }
+
+    ctx.fillStyle = C_LIGHT;
+    ctx.fillRect(BOARD_X, BOARD_Y + BOARD_ROWS * TILE_SIZE - 1, BOARD_COLS * TILE_SIZE, 1);
+    ctx.fillRect(BOARD_X + BOARD_COLS * TILE_SIZE - 1, BOARD_Y, 1, BOARD_ROWS * TILE_SIZE);
+
+    if (gameState === STATE_PLAYING && (blinkTimer % 30 < 22)) {
+      const curX = BOARD_X + cursor.c * TILE_SIZE;
+      const curY = BOARD_Y + cursor.r * TILE_SIZE;
+
+      ctx.fillStyle = C_DARKEST;
+      ctx.fillRect(curX, curY, 3, 1);
+      ctx.fillRect(curX, curY, 1, 3);
+      ctx.fillRect(curX + TILE_SIZE - 3, curY, 3, 1);
+      ctx.fillRect(curX + TILE_SIZE - 1, curY, 1, 3);
+      ctx.fillRect(curX, curY + TILE_SIZE - 1, 3, 1);
+      ctx.fillRect(curX, curY + TILE_SIZE - 3, 1, 3);
+      ctx.fillRect(curX + TILE_SIZE - 3, curY + TILE_SIZE - 1, 3, 1);
+      ctx.fillRect(curX + TILE_SIZE - 1, curY + TILE_SIZE - 3, 1, 3);
+    }
+  }
+
+  function renderSidebar() {
+    const sideX = 109;
+
+    drawPixelText("NEXT", sideX + 4, 25, C_DARKEST);
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(sideX, 33, 48, 44);
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(sideX + 1, 34, 46, 42);
+
+    const activeType = rotatePipe(currentPipe, currentRotation);
+    drawPipeSprite(activeType, sideX + 5, 38, false, false);
+
+    drawPixelText("ROT", sideX + 22, 38, C_DARK);
+    const degStr = String((currentRotation % 4) * 90) + "=";
+    drawPixelText(degStr, sideX + 22, 45, C_DARKEST);
+
+    ctx.fillStyle = C_LIGHT;
+    ctx.fillRect(sideX + 2, 54, 44, 1);
+
+    drawPixelText("WAIT:", sideX + 4, 57, C_DARK);
+    if (queue.length > 0) {
+      drawPipeSprite(queue[0], sideX + 24, 56, false, true);
+    }
+    if (queue.length > 1) {
+      drawPipeSprite(queue[1], sideX + 35, 56, false, true);
+    }
+
+    const tier = getDifficultyTier(stage);
+    drawPixelText("LEVEL", sideX + 4, 82, C_DARK);
+    drawPixelText(tier.name, sideX + 4, 90, C_DARKEST);
+
+    drawPixelText("USED", sideX + 4, 102, C_DARK);
+    drawPixelText(String(pipesPlacedCount).padStart(2, "0"), sideX + 4, 110, C_DARKEST);
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(0, 131, GB_W, 13);
+    ctx.fillStyle = C_LIGHTEST;
+    drawPixelText("A:SET B:ROT SEL:RST", 12, 135, C_LIGHTEST);
+  }
+
+  function renderTitleScreen() {
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(0, 0, GB_W, GB_H);
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(0, 0, GB_W, 2);
+    ctx.fillRect(0, GB_H - 2, GB_W, 2);
+
+    ctx.fillRect(16, 12, 128, 30);
+    ctx.fillStyle = C_LIGHT;
+    ctx.fillRect(18, 14, 124, 26);
+    ctx.fillStyle = C_DARKEST;
+
+    drawPixelText("PIPE CONTROL GB", 35, 20, C_DARKEST);
+    drawPixelText("RETRO EDITION", 42, 28, C_DARK);
+
+    drawPipeSprite("F", 20, 16, true, true);
+    drawPipeSprite("H", 30, 16, true, true);
+    drawPipeSprite("7", 128, 26, true, true);
+    drawPipeSprite("V", 128, 16, true, true);
+
+    if ((blinkTimer % 40) < 24) {
+      drawPixelText("PRESS START", 48, 62, C_DARKEST);
+    }
+
+    ctx.fillStyle = C_DARK;
+    drawPixelText("SELECT : RECORDS", 36, 82, C_DARK);
+    drawPixelText("1000 RETRO STAGES", 34, 94, C_DARK);
+
+    ctx.fillStyle = C_LIGHT;
+    ctx.fillRect(20, 106, 120, 22);
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(21, 107, 118, 20);
+    drawPixelText("D-PAD: MOVE CURSOR", 28, 110, C_LIGHTEST);
+    drawPixelText("A: PLACE  B: ROTATE", 28, 118, C_LIGHTEST);
+
+    drawPixelText("= 1989-2026 RETRO GB", 26, 134, C_DARK);
+  }
+
+  function renderRankingScreen() {
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(0, 0, GB_W, GB_H);
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(0, 0, GB_W, 14);
+    drawPixelText("TOP 10 RECORDS", 40, 4, C_LIGHTEST);
+
+    drawPixelText("RK NAME  STAGE  SCORE", 8, 18, C_DARK);
+    ctx.fillStyle = C_DARK;
+    ctx.fillRect(8, 25, 144, 1);
+
+    const count = Math.min(8, highScores.length);
+    for (let i = 0; i < count; i++) {
+      const item = highScores[i];
+      const y = 29 + i * 11;
+      const rankStr = String(i + 1).padStart(2, " ") + ".";
+      const nameStr = (item.name || "AAA").slice(0, 3).padEnd(3, " ");
+      const stageStr = "ST" + String(item.stage || 1).padStart(3, "0");
+      const scoreStr = String(item.score || 0).padStart(6, "0");
+
+      const rowColor = (i === 0) ? C_DARKEST : C_DARK;
+      drawPixelText(rankStr, 8, y, rowColor);
+      drawPixelText(nameStr, 24, y, rowColor);
+      drawPixelText(stageStr, 54, y, rowColor);
+      drawPixelText(scoreStr, 96, y, rowColor);
+    }
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(0, 130, GB_W, 14);
+    drawPixelText("PRESS B / START", 38, 134, C_LIGHTEST);
+  }
+
+  function renderNameEntry() {
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(0, 0, GB_W, GB_H);
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(0, 0, GB_W, 16);
+    drawPixelText("NEW HI-SCORE!", 44, 5, C_LIGHTEST);
+
+    drawPixelText("STAGE " + String(stage).padStart(3, "0"), 52, 24, C_DARK);
+    drawPixelText("SCORE: " + String(score), 42, 34, C_DARKEST);
+
+    drawPixelText("ENTER YOUR INITIALS", 30, 52, C_DARK);
+
+    const slotX = 54;
+    const slotY = 66;
+    for (let i = 0; i < 3; i++) {
+      const x = slotX + i * 20;
+      ctx.fillStyle = C_DARKEST;
+      ctx.fillRect(x, slotY, 14, 18);
+      ctx.fillStyle = C_LIGHTEST;
+      ctx.fillRect(x + 1, slotY + 1, 12, 16);
+
+      drawPixelText(nameEntryInput[i], x + 4, slotY + 5, C_DARKEST);
+
+      if (i === nameEntryCharIndex && (blinkTimer % 24 < 14)) {
+        ctx.fillStyle = C_DARKEST;
+        ctx.fillRect(x + 2, slotY + 14, 10, 2);
+      }
+    }
+
+    drawPixelText("UP/DOWN: CHANGE LETTER", 20, 96, C_DARK);
+    drawPixelText("A: NEXT   B: BACK", 28, 106, C_DARK);
+    drawPixelText("START: CONFIRM", 42, 116, C_DARKEST);
+  }
+
+  function renderStageClear() {
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(16, 28, 128, 86);
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(18, 30, 124, 82);
+
+    drawPixelText("STAGE CLEAR!", 46, 36, C_DARKEST);
+    ctx.fillStyle = C_DARK;
+    ctx.fillRect(24, 46, 112, 1);
+
+    drawPixelText("TIME BONUS: +" + Math.floor(timeRemaining * 10), 24, 52, C_DARK);
+    drawPixelText("PIPE BONUS: +" + (pipesPlacedCount * 15), 24, 62, C_DARK);
+    drawPixelText("SCORE: " + String(score).padStart(6, "0"), 24, 74, C_DARKEST);
+
+    if ((blinkTimer % 30) < 18) {
+      drawPixelText("PRESS A / START", 36, 92, C_DARKEST);
+    }
+  }
+
+  function renderGameOver() {
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(20, 36, 120, 72);
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(22, 38, 116, 68);
+
+    drawPixelText("GAME OVER", 54, 46, C_DARKEST);
+    ctx.fillStyle = C_DARK;
+    ctx.fillRect(28, 56, 104, 1);
+
+    drawPixelText("TIME IS UP!", 52, 62, C_DARK);
+    drawPixelText("FINAL: " + String(score), 42, 72, C_DARKEST);
+
+    if ((blinkTimer % 30) < 18) {
+      drawPixelText("PRESS START", 48, 86, C_DARKEST);
+    }
+  }
+
+  function renderCongrats() {
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(0, 0, GB_W, GB_H);
+
+    ctx.fillStyle = C_DARKEST;
+    ctx.fillRect(0, 0, GB_W, 20);
+    drawPixelText("CONGRATULATIONS!", 32, 7, C_LIGHTEST);
+
+    drawPixelText("1000 STAGES CLEAR", 34, 32, C_DARKEST);
+    drawPixelText("YOU ARE THE", 48, 46, C_DARK);
+    drawPixelText("PIPE CONTROL MASTER!", 20, 56, C_DARKEST);
+
+    drawPipeSprite("F", 60, 72, true, false);
+    drawPipeSprite("H", 73, 72, true, false);
+    drawPipeSprite("7", 86, 72, true, false);
+
+    drawPixelText("FINAL SCORE: " + score, 30, 98, C_DARKEST);
+    if ((blinkTimer % 30) < 18) {
+      drawPixelText("PRESS START", 48, 122, C_DARK);
+    }
+  }
+
+  function renderPauseOverlay() {
+    ctx.fillStyle = "rgba(15, 56, 15, 0.75)";
+    ctx.fillRect(40, 56, 80, 24);
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(41, 57, 78, 22);
+    drawPixelText("PAUSED", 64, 65, C_DARKEST);
+  }
+
+  function render() {
+    ctx.fillStyle = C_LIGHTEST;
+    ctx.fillRect(0, 0, GB_W, GB_H);
+
+    switch (gameState) {
+      case STATE_TITLE:
+        renderTitleScreen();
+        break;
+      case STATE_RANKING:
+        renderRankingScreen();
+        break;
+      case STATE_NAME_ENTRY:
+        renderNameEntry();
+        break;
+      case STATE_PLAYING:
+      case STATE_FLOW:
+      case STATE_STAGE_CLEAR:
+      case STATE_GAME_OVER:
+      case STATE_PAUSED:
+        renderHUD();
+        renderBoard();
+        renderSidebar();
+        if (gameState === STATE_STAGE_CLEAR) renderStageClear();
+        if (gameState === STATE_GAME_OVER) renderGameOver();
+        if (gameState === STATE_PAUSED) renderPauseOverlay();
+        break;
+      case STATE_CONGRATS:
+        renderCongrats();
+        break;
+    }
+  }
+
+  // ==========================================================================
+  // GAME ACTIONS
+  // ==========================================================================
+  function startGame(fromStage = 1) {
+    stage = fromStage;
+    score = 0;
+    generateStage(stage);
+    gameState = STATE_PLAYING;
+    sfxTitle();
+  }
+
+  function startNextStage() {
+    if (stage >= TOTAL_STAGES) {
+      gameState = STATE_CONGRATS;
+      sfxStageClear();
+      return;
+    }
+    stage++;
+    generateStage(stage);
+    gameState = STATE_PLAYING;
+    sfxTitle();
+  }
+
+  function restartCurrentStage() {
+    generateStage(stage);
+    gameState = STATE_PLAYING;
+    sfxError();
+  }
+
+  function startWaterFlow(path) {
+    gameState = STATE_FLOW;
+    flowPath = path;
+    flowIndex = 0;
+    flowTickTimer = 0;
+    sfxWaterStep();
+  }
+
+  function updateWaterFlow(dt) {
+    flowTickTimer += dt * speedMultiplier;
+    if (flowTickTimer >= 0.12) {
+      flowTickTimer = 0;
+      if (flowIndex < flowPath.length) {
+        const cell = flowPath[flowIndex];
+        if (board[cell.r][cell.c]) {
+          board[cell.r][cell.c].hasWater = true;
+        }
+        flowIndex++;
+        sfxWaterStep();
+      } else {
+        finishStageVictory();
+      }
+    }
+  }
+
+  function finishStageVictory() {
+    gameState = STATE_STAGE_CLEAR;
+    sfxStageClear();
+
+    const timeBonus = Math.floor(timeRemaining * 10);
+    const pipeBonus = pipesPlacedCount * 15;
+    const stageBonus = 100 + stage * 25;
+    const totalBonus = stageBonus + timeBonus + pipeBonus;
+    score += totalBonus;
+
+    if (score > hiScore) {
+      hiScore = score;
+      saveHighScores();
+    }
+  }
+
+  function checkHighScoreQualifies() {
+    return highScores.length < 10 || score > highScores[highScores.length - 1].score;
+  }
+
+  function triggerGameOver() {
+    gameState = STATE_GAME_OVER;
+    sfxGameOver();
+    if (checkHighScoreQualifies()) {
+      setTimeout(() => {
+        if (gameState === STATE_GAME_OVER) {
+          nameEntryInput = ["A", "A", "A"];
+          nameEntryCharIndex = 0;
+          gameState = STATE_NAME_ENTRY;
+        }
+      }, 1500);
+    }
+  }
+
+  function commitNewHighScore() {
+    const finalName = nameEntryInput.join("");
+    highScores.push({ name: finalName, score, stage });
+    highScores.sort((a, b) => b.score - a.score);
+    if (highScores.length > 10) highScores.length = 10;
+    saveHighScores();
+    gameState = STATE_RANKING;
+  }
+
+  // ==========================================================================
+  // HARDWARE / BUTTON EVENT DISPATCHER
+  // ==========================================================================
+  function handleButtonPress(btn) {
+    initAudio();
+    if (navigator.vibrate) {
+      try { navigator.vibrate(15); } catch(e) {}
+    }
+
+    switch (btn) {
+      case "UP":
+        if (gameState === STATE_PLAYING) {
+          if (cursor.r > 0) { cursor.r--; sfxMove(); }
+        } else if (gameState === STATE_NAME_ENTRY) {
+          let code = nameEntryInput[nameEntryCharIndex].charCodeAt(0);
+          code = (code <= 65) ? 90 : code - 1;
+          nameEntryInput[nameEntryCharIndex] = String.fromCharCode(code);
+          sfxMove();
+        }
+        break;
+
+      case "DOWN":
+        if (gameState === STATE_PLAYING) {
+          if (cursor.r < BOARD_ROWS - 1) { cursor.r++; sfxMove(); }
+        } else if (gameState === STATE_NAME_ENTRY) {
+          let code = nameEntryInput[nameEntryCharIndex].charCodeAt(0);
+          code = (code >= 90) ? 65 : code + 1;
+          nameEntryInput[nameEntryCharIndex] = String.fromCharCode(code);
+          sfxMove();
+        }
+        break;
+
+      case "LEFT":
+        if (gameState === STATE_PLAYING) {
+          if (cursor.c > 0) { cursor.c--; sfxMove(); }
+        } else if (gameState === STATE_NAME_ENTRY) {
+          if (nameEntryCharIndex > 0) { nameEntryCharIndex--; sfxMove(); }
+        }
+        break;
+
+      case "RIGHT":
+        if (gameState === STATE_PLAYING) {
+          if (cursor.c < BOARD_COLS - 1) { cursor.c++; sfxMove(); }
+        } else if (gameState === STATE_NAME_ENTRY) {
+          if (nameEntryCharIndex < 2) { nameEntryCharIndex++; sfxMove(); }
+        }
+        break;
+
+      case "A":
+        if (gameState === STATE_TITLE) {
+          startGame(1);
+        } else if (gameState === STATE_RANKING) {
+          gameState = STATE_TITLE;
+          sfxMove();
+        } else if (gameState === STATE_STAGE_CLEAR) {
+          startNextStage();
+        } else if (gameState === STATE_GAME_OVER) {
+          if (checkHighScoreQualifies()) {
+            nameEntryInput = ["A", "A", "A"];
+            nameEntryCharIndex = 0;
+            gameState = STATE_NAME_ENTRY;
+          } else {
+            gameState = STATE_TITLE;
+          }
+        } else if (gameState === STATE_CONGRATS) {
+          gameState = STATE_TITLE;
+        } else if (gameState === STATE_NAME_ENTRY) {
+          if (nameEntryCharIndex < 2) {
+            nameEntryCharIndex++;
+            sfxMove();
+          } else {
+            commitNewHighScore();
+          }
+        } else if (gameState === STATE_PLAYING) {
+          const isFixedCell = (cursor.r === IN_POS.r && cursor.c === IN_POS.c) ||
+                              (cursor.r === OUT_POS.r && cursor.c === OUT_POS.c);
+
+          if (isFixedCell) {
+            sfxError();
+            return;
+          }
+
+          const activeType = rotatePipe(currentPipe, currentRotation);
+          board[cursor.r][cursor.c] = {
+            type: activeType,
+            fixed: false,
+            hasWater: false
+          };
+          pipesPlacedCount++;
+          sfxPlace();
+
+          if (queue.length > 0) {
+            currentPipe = queue.shift();
+          } else {
+            currentPipe = PIPE_TYPES[Math.floor(Math.random() * PIPE_TYPES.length)];
+          }
+          currentRotation = 0;
+
+          const solvedPath = checkFlowPath();
+          if (solvedPath) {
+            startWaterFlow(solvedPath);
+          }
+        }
+        break;
+
+      case "B":
+        if (gameState === STATE_TITLE || gameState === STATE_RANKING) {
+          gameState = STATE_TITLE;
+          sfxMove();
+        } else if (gameState === STATE_NAME_ENTRY) {
+          if (nameEntryCharIndex > 0) {
+            nameEntryCharIndex--;
+            sfxMove();
+          }
+        } else if (gameState === STATE_PLAYING) {
+          currentRotation = (currentRotation + 1) % 4;
+          sfxRotate();
+        }
+        break;
+
+      case "SELECT":
+        if (gameState === STATE_TITLE) {
+          gameState = STATE_RANKING;
+          sfxMove();
+        } else if (gameState === STATE_RANKING) {
+          gameState = STATE_TITLE;
+          sfxMove();
+        } else if (gameState === STATE_PLAYING) {
+          restartCurrentStage();
+        }
+        break;
+
+      case "START":
+        if (gameState === STATE_TITLE) {
+          startGame(1);
+        } else if (gameState === STATE_RANKING) {
+          gameState = STATE_TITLE;
+          sfxMove();
+        } else if (gameState === STATE_STAGE_CLEAR) {
+          startNextStage();
+        } else if (gameState === STATE_GAME_OVER) {
+          if (checkHighScoreQualifies()) {
+            nameEntryInput = ["A", "A", "A"];
+            nameEntryCharIndex = 0;
+            gameState = STATE_NAME_ENTRY;
+          } else {
+            gameState = STATE_TITLE;
+          }
+        } else if (gameState === STATE_CONGRATS) {
+          gameState = STATE_TITLE;
+        } else if (gameState === STATE_NAME_ENTRY) {
+          commitNewHighScore();
+        } else if (gameState === STATE_PLAYING) {
+          gameState = STATE_PAUSED;
+          sfxPause();
+        } else if (gameState === STATE_PAUSED) {
+          gameState = STATE_PLAYING;
+          sfxPause();
+        }
+        break;
+    }
+  }
+
+  // Bind Buttons
+  function bindTouch(id, action) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      el.classList.add("pressed");
+      handleButtonPress(action);
+    });
+    el.addEventListener("pointerup", (e) => {
+      e.preventDefault();
+      el.classList.remove("pressed");
+    });
+    el.addEventListener("pointercancel", (e) => {
+      e.preventDefault();
+      el.classList.remove("pressed");
+    });
+  }
+
+  bindTouch("btn-up", "UP");
+  bindTouch("btn-down", "DOWN");
+  bindTouch("btn-left", "LEFT");
+  bindTouch("btn-right", "RIGHT");
+  bindTouch("btn-a", "A");
+  bindTouch("btn-b", "B");
+  bindTouch("btn-start", "START");
+  bindTouch("btn-select", "SELECT");
+
+  // Keyboard mapping
+  const KEY_MAP = {
+    "ArrowUp": "UP", "KeyW": "UP",
+    "ArrowDown": "DOWN", "KeyS": "DOWN",
+    "ArrowLeft": "LEFT", "KeyA": "LEFT",
+    "ArrowRight": "RIGHT", "KeyD": "RIGHT",
+    "KeyX": "A", "Space": "A",
+    "KeyZ": "B", "KeyR": "B",
+    "Enter": "START",
+    "ShiftLeft": "SELECT", "ShiftRight": "SELECT"
+  };
+
+  window.addEventListener("keydown", (e) => {
+    const act = KEY_MAP[e.code];
+    if (act) {
+      e.preventDefault();
+      handleButtonPress(act);
+    }
+  }, { passive: false });
+
+  // Speed bar items
+  document.querySelectorAll(".speed-item").forEach(item => {
+    item.addEventListener("click", () => {
+      document.querySelectorAll(".speed-item").forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+      speedMultiplier = parseFloat(item.dataset.speed) || 1.0;
+      sfxMove();
+    });
+  });
+
+  // Power On/Off
+  const powerBtn = document.getElementById("power-toggle");
+  powerBtn.addEventListener("click", () => {
+    screenPowerOn = !screenPowerOn;
+    powerBtn.classList.toggle("off", !screenPowerOn);
+    canvas.classList.toggle("screen-off", !screenPowerOn);
+    sfxPause();
+  });
+
+  // Palette switchers
+  document.getElementById("toggle-palette-btn").addEventListener("click", () => switchPalette());
+  document.getElementById("btn-palette-icon").addEventListener("click", () => switchPalette());
+
+  // Menu / Records
+  document.getElementById("btn-menu").addEventListener("click", () => {
+    if (gameState === STATE_TITLE) {
+      gameState = STATE_RANKING;
+    } else if (gameState === STATE_RANKING) {
+      gameState = STATE_TITLE;
+    } else {
+      gameState = (gameState === STATE_PAUSED) ? STATE_PLAYING : STATE_PAUSED;
+    }
+    sfxMove();
+  });
+
+  // Save / Restart
+  document.getElementById("btn-save").addEventListener("click", () => {
+    if (gameState === STATE_PLAYING) {
+      restartCurrentStage();
+    } else {
+      sfxMove();
+    }
+  });
+
+  // Touch canvas support
+  canvas.addEventListener("pointerdown", function(e) {
+    e.preventDefault();
+    initAudio();
+    if (gameState === STATE_TITLE) { startGame(1); return; }
+    if (gameState === STATE_STAGE_CLEAR) { startNextStage(); return; }
+    if (gameState === STATE_GAME_OVER) { handleButtonPress("START"); return; }
+
+    if (gameState === STATE_PLAYING) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = GB_W / rect.width;
+      const scaleY = GB_H / rect.height;
+      const clickX = (e.clientX - rect.left) * scaleX;
+      const clickY = (e.clientY - rect.top) * scaleY;
+
+      const c = Math.floor((clickX - BOARD_X) / TILE_SIZE);
+      const r = Math.floor((clickY - BOARD_Y) / TILE_SIZE);
+
+      if (r >= 0 && r < BOARD_ROWS && c >= 0 && c < BOARD_COLS) {
+        if (cursor.r === r && cursor.c === c) {
+          handleButtonPress("A");
+        } else {
+          cursor.r = r;
+          cursor.c = c;
+          sfxMove();
+        }
+      } else if (clickX >= 109 && clickX <= 156 && clickY >= 33 && clickY <= 77) {
+        handleButtonPress("B");
+      }
+    }
+  }, { passive: false });
+
+  // Main Game Loop
+  function gameLoop(now) {
+    const dt = Math.min(0.1, (now - lastTimestamp) / 1000);
+    lastTimestamp = now;
+    blinkTimer = (blinkTimer + 1) % 600;
+
+    if (gameState === STATE_PLAYING) {
+      timeRemaining -= dt;
+      if (timeRemaining <= 0) {
+        timeRemaining = 0;
+        const finalPath = checkFlowPath();
+        if (finalPath) {
+          startWaterFlow(finalPath);
+        } else {
+          triggerGameOver();
+        }
+      }
+    } else if (gameState === STATE_FLOW) {
+      updateWaterFlow(dt);
+    }
+
+    render();
+    requestAnimationFrame(gameLoop);
+  }
+
+  requestAnimationFrame(gameLoop);
+
 })();
 </script>
 </body>
