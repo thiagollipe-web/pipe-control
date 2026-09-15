@@ -810,18 +810,8 @@ body {
   const canvas = document.getElementById("gb-canvas");
   const ctx = canvas.getContext("2d", { alpha: false });
 
-  // Tela cheia: toque duplo na carcaça solicita Fullscreen quando suportado.
+  // Fullscreen é controlado exclusivamente pelo botão SELECT e não por gestos/toques na carcaça.
   const skin = document.getElementById("emulator-skin");
-  let lastSkinTap = 0;
-  skin.addEventListener("dblclick", async () => {
-    try {
-      if (!document.fullscreenElement && skin.requestFullscreen) {
-        await skin.requestFullscreen();
-      } else if (document.fullscreenElement && document.exitFullscreen) {
-        await document.exitFullscreen();
-      }
-    } catch (e) {}
-  });
   ctx.imageSmoothingEnabled = false;
 
   // Palettes
