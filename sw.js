@@ -1,4 +1,4 @@
-const CACHE_NAME = "pipe-control-v1";
+const CACHE_NAME = "pipe-control-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
