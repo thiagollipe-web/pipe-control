@@ -3,13 +3,6 @@
 <head>
 <meta charset="UTF-8">
 
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#f7f7f7">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<link rel="apple-touch-icon" href="./icon-192.png">
-
 <meta
   name="viewport"
   content="width=device-width,
@@ -998,3 +991,2308 @@ function gerarFila(){
     for(
         let i=0;
         i<4;
+        i++
+    ){
+
+        fila.push(
+            TIPOS[
+                Math.floor(
+                    random() *
+                    TIPOS.length
+                )
+            ]
+        );
+    }
+}
+
+
+/*
+   Busca o próximo cano.
+
+   IMPORTANTE:
+
+   O cano não desaparece
+   da fila visual antes de
+   ser colocado.
+*/
+
+function obterCanoAtual(){
+
+    if(
+        canoAtual === null
+    ){
+
+        canoAtual =
+            fila.shift();
+
+        fila.push(
+            TIPOS[
+                Math.floor(
+                    random() *
+                    TIPOS.length
+                )
+            ]
+        );
+
+        rotacaoAtual = 0;
+    }
+
+    return canoAtual;
+}
+
+
+/* =====================================================
+   ROTAÇÃO
+   ===================================================== */
+
+function rotacionarTipo(
+    tipo,
+    vezes
+){
+
+    if(!tipo)
+        return null;
+
+    const d =
+        CANOS[tipo];
+
+    let N = d.N;
+
+    let S = d.S;
+
+    let L = d.L;
+
+    let O = d.O;
+
+
+    for(
+        let i=0;
+        i<vezes;
+        i++
+    ){
+
+        const novoN = O;
+
+        const novoL = N;
+
+        const novoS = L;
+
+        const novoO = S;
+
+        N = novoN;
+
+        L = novoL;
+
+        S = novoS;
+
+        O = novoO;
+    }
+
+
+    return Object.keys(
+        CANOS
+    ).find(
+        key =>
+
+            CANOS[key].N === N &&
+
+            CANOS[key].S === S &&
+
+            CANOS[key].L === L &&
+
+            CANOS[key].O === O
+    );
+}
+
+
+/* =====================================================
+   GIRAR
+   ===================================================== */
+
+function girarCano(){
+
+    if(fim)
+        return;
+
+    obterCanoAtual();
+
+    rotacaoAtual =
+        (
+            rotacaoAtual + 1
+        ) % 4;
+
+    som("rotate");
+
+    render();
+}
+
+
+/* =====================================================
+   GERAR SOLUÇÃO
+   ===================================================== */
+
+function gerarSolucao(){
+
+    random =
+        rng(
+            fase *
+            92821 +
+            733
+        );
+
+
+    solucao =
+        Array.from(
+            {
+                length:
+                    LINHAS
+            },
+
+            () =>
+                Array(
+                    COLUNAS
+                ).fill(null)
+        );
+
+
+    let r =
+        entrada.r;
+
+    let c =
+        entrada.c;
+
+
+    solucao[r][c] = true;
+
+
+    /*
+       Caminho base.
+
+       A partir das fases
+       avançadas adicionamos
+       pequenas variações.
+    */
+
+    while(
+        c < saida.c
+    ){
+
+        c++;
+
+        solucao[r][c] =
+            true;
+
+
+        if(
+            fase > 100 &&
+            c > 1 &&
+            c < 6 &&
+            random() < .16
+        ){
+
+            if(
+                r < LINHAS-1
+            ){
+
+                r++;
+
+                solucao[r][c] =
+                    true;
+            }
+        }
+
+        else if(
+            fase > 100 &&
+            c > 1 &&
+            c < 6 &&
+            random() < .16
+        ){
+
+            if(
+                r > 0
+            ){
+
+                r--;
+
+                solucao[r][c] =
+                    true;
+            }
+        }
+    }
+
+
+    while(
+        r < saida.r
+    ){
+
+        r++;
+
+        solucao[r][c] =
+            true;
+    }
+
+
+    while(
+        r > saida.r
+    ){
+
+        r--;
+
+        solucao[r][c] =
+            true;
+    }
+
+
+    /*
+       Converte o caminho
+       em canos.
+    */
+
+    for(
+        let rr=0;
+        rr<LINHAS;
+        rr++
+    ){
+
+        for(
+            let cc=0;
+            cc<COLUNAS;
+            cc++
+        ){
+
+            if(
+                !solucao[rr][cc]
+            )
+                continue;
+
+
+            if(
+                rr===entrada.r &&
+                cc===entrada.c
+            )
+                continue;
+
+
+            if(
+                rr===saida.r &&
+                cc===saida.c
+            )
+                continue;
+
+
+            let N=0;
+
+            let S=0;
+
+            let L=0;
+
+            let O=0;
+
+
+            if(
+                rr>0 &&
+                solucao[rr-1][cc]
+            )
+                N=1;
+
+
+            if(
+                rr<LINHAS-1 &&
+                solucao[rr+1][cc]
+            )
+                S=1;
+
+
+            if(
+                cc<COLUNAS-1 &&
+                solucao[rr][cc+1]
+            )
+                L=1;
+
+
+            if(
+                cc>0 &&
+                solucao[rr][cc-1]
+            )
+                O=1;
+
+
+            solucao[rr][cc] =
+                Object.keys(
+                    CANOS
+                ).find(
+                    key =>
+
+                        CANOS[key].N === N &&
+
+                        CANOS[key].S === S &&
+
+                        CANOS[key].L === L &&
+
+                        CANOS[key].O === O
+                ) || null;
+        }
+    }
+}
+
+
+
+/* =====================================================
+   SISTEMA DE RECORDES — TOP 10
+   ===================================================== */
+
+function normalizarNome(nome){
+
+    const limpo = String(nome || "").trim();
+
+    if(!limpo){
+        return "JOGADOR";
+    }
+
+    return limpo
+        .replace(/[<>]/g, "")
+        .slice(0, 20);
+}
+
+function carregarRanking(){
+
+    try{
+
+        const salvo =
+            localStorage.getItem(RECORDS_KEY);
+
+        if(!salvo){
+            return [];
+        }
+
+        const dados = JSON.parse(salvo);
+
+        if(!Array.isArray(dados)){
+            return [];
+        }
+
+        return dados
+            .filter(item =>
+                item &&
+                typeof item.name === "string" &&
+                Number.isFinite(Number(item.score)) &&
+                Number.isFinite(Number(item.stage))
+            )
+            .map(item => ({
+                name: normalizarNome(item.name),
+                score: Number(item.score),
+                stage: Number(item.stage),
+                date: item.date || ""
+            }))
+            .sort((a,b) => {
+                if(b.score !== a.score){
+                    return b.score - a.score;
+                }
+                return b.stage - a.stage;
+            })
+            .slice(0, MAX_RECORDS);
+
+    }catch(error){
+
+        console.warn(
+            "Não foi possível ler os recordes:",
+            error
+        );
+
+        return [];
+    }
+}
+
+function salvarRanking(ranking){
+
+    localStorage.setItem(
+        RECORDS_KEY,
+        JSON.stringify(
+            ranking.slice(0, MAX_RECORDS)
+        )
+    );
+}
+
+function estaNoTop10(novaPontuacao, novaFase){
+
+    const ranking = carregarRanking();
+
+    if(ranking.length < MAX_RECORDS){
+        return true;
+    }
+
+    const ultimo =
+        ranking[ranking.length - 1];
+
+    return (
+        novaPontuacao > ultimo.score ||
+        (
+            novaPontuacao === ultimo.score &&
+            novaFase > ultimo.stage
+        )
+    );
+}
+
+function registrarRecorde(novaPontuacao, novaFase){
+
+    if(!estaNoTop10(novaPontuacao, novaFase)){
+        return false;
+    }
+
+    let nome = window.prompt(
+        "NOVO RECORDE!\n\nDigite o nome do jogador:",
+        "JOGADOR"
+    );
+
+    if(nome === null){
+        nome = "JOGADOR";
+    }
+
+    nome = normalizarNome(nome);
+
+    const ranking = carregarRanking();
+
+    ranking.push({
+        name: nome,
+        score: Number(novaPontuacao),
+        stage: Number(novaFase),
+        date: new Date().toISOString()
+    });
+
+    ranking.sort((a,b) => {
+
+        if(b.score !== a.score){
+            return b.score - a.score;
+        }
+
+        return b.stage - a.stage;
+    });
+
+    salvarRanking(ranking);
+
+    abrirRecordes();
+
+    return true;
+}
+
+function escaparTexto(texto){
+
+    return String(texto)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+function atualizarListaRecordes(){
+
+    if(!recordsList){
+        return;
+    }
+
+    const ranking = carregarRanking();
+
+    if(ranking.length === 0){
+
+        recordsList.innerHTML = `
+            <div class="records-empty">
+                NENHUM RECORDE REGISTRADO.<br><br>
+                COMPLETE UMA FASE PARA ENTRAR NO RANKING.
+            </div>
+        `;
+
+        return;
+    }
+
+    const medalhas = ["🥇", "🥈", "🥉"];
+
+    recordsList.innerHTML = ranking
+        .map((item,index) => `
+            <div class="record-item">
+
+                <div class="record-position">
+                    ${medalhas[index] || (index+1)+"º"}
+                </div>
+
+                <div>
+                    <div class="record-name">
+                        ${escaparTexto(item.name)}
+                    </div>
+
+                    <div class="record-meta">
+                        FASE ${String(item.stage).padStart(4,"0")}
+                    </div>
+                </div>
+
+                <div class="record-score">
+                    ${item.score.toLocaleString("pt-BR")}
+                </div>
+
+            </div>
+        `)
+        .join("");
+}
+
+function abrirRecordes(){
+
+    atualizarListaRecordes();
+
+    if(recordsModal){
+
+        recordsModal.classList.remove("hidden");
+
+        recordsModal.setAttribute(
+            "aria-hidden",
+            "false"
+        );
+    }
+}
+
+function fecharRecordes(){
+
+    if(recordsModal){
+
+        recordsModal.classList.add("hidden");
+
+        recordsModal.setAttribute(
+            "aria-hidden",
+            "true"
+        );
+    }
+}
+
+if(recordsOpen){
+
+    recordsOpen.addEventListener(
+        "click",
+        ()=>{
+            iniciarAudio();
+            abrirRecordes();
+        }
+    );
+}
+
+if(recordsClose){
+
+    recordsClose.addEventListener(
+        "click",
+        ()=>{
+            fecharRecordes();
+        }
+    );
+}
+
+if(recordsClear){
+
+    recordsClear.addEventListener(
+        "click",
+        ()=>{
+
+            if(!confirm("Apagar todos os recordes?")){
+                return;
+            }
+
+            localStorage.removeItem(RECORDS_KEY);
+
+            atualizarListaRecordes();
+        }
+    );
+}
+
+if(recordsModal){
+
+    recordsModal.addEventListener(
+        "click",
+        event=>{
+
+            if(event.target === recordsModal){
+                fecharRecordes();
+            }
+        }
+    );
+}
+
+window.addEventListener(
+    "keydown",
+    event=>{
+
+        if(event.key === "Escape"){
+            fecharRecordes();
+        }
+    }
+);
+
+/* =====================================================
+   INICIAR FASE
+   ===================================================== */
+
+function iniciarFase(){
+
+    criarGrade();
+
+    gerarSolucao();
+
+    random =
+        rng(
+            fase *
+            92821 +
+            733
+        );
+
+    gerarFila();
+
+    canoAtual = null;
+
+    rotacaoAtual = 0;
+
+
+    grade[
+        entrada.r
+    ][
+        entrada.c
+    ] = "--";
+
+
+    grade[
+        saida.r
+    ][
+        saida.c
+    ] = "--";
+
+
+    tempoLimite =
+        calcularTempo(fase);
+
+    tempoRestante =
+        tempoLimite;
+
+
+    canosColocados = 0;
+
+    fim = false;
+
+    venceu = false;
+
+    final = false;
+
+    agua = false;
+
+
+    nextBtn.style.display =
+        "none";
+}
+
+
+/* =====================================================
+   CONEXÕES
+   ===================================================== */
+
+function tem(
+    cano,
+    direcao
+){
+
+    return !!(
+        cano &&
+        CANOS[cano] &&
+        CANOS[cano][direcao]
+    );
+}
+
+
+function conectado(
+    r,
+    c,
+    nr,
+    nc,
+    d1,
+    d2
+){
+
+    if(
+        nr < 0 ||
+        nr >= LINHAS ||
+        nc < 0 ||
+        nc >= COLUNAS
+    ){
+
+        return false;
+    }
+
+
+    const a =
+        grade[r][c];
+
+    const b =
+        grade[nr][nc];
+
+
+    return (
+
+        tem(a,d1) &&
+
+        tem(b,d2)
+    );
+}
+
+
+/* =====================================================
+   FLUXO
+   ===================================================== */
+
+function checarFluxo(){
+
+    const filaBusca = [
+
+        [
+            entrada.r,
+            entrada.c
+        ]
+
+    ];
+
+
+    const visitados =
+        new Set();
+
+
+    while(
+        filaBusca.length
+    ){
+
+        const atual =
+            filaBusca.shift();
+
+        const r =
+            atual[0];
+
+        const c =
+            atual[1];
+
+
+        const chave =
+            r+","+c;
+
+
+        if(
+            visitados.has(chave)
+        )
+            continue;
+
+
+        visitados.add(chave);
+
+
+        if(
+            r===saida.r &&
+            c===saida.c
+        ){
+
+            return true;
+        }
+
+
+        if(
+            conectado(
+                r,c,
+                r-1,c,
+                "N",
+                "S"
+            )
+        ){
+
+            filaBusca.push(
+                [r-1,c]
+            );
+        }
+
+
+        if(
+            conectado(
+                r,c,
+                r+1,c,
+                "S",
+                "N"
+            )
+        ){
+
+            filaBusca.push(
+                [r+1,c]
+            );
+        }
+
+
+        if(
+            conectado(
+                r,c,
+                r,c+1,
+                "L",
+                "O"
+            )
+        ){
+
+            filaBusca.push(
+                [r,c+1]
+            );
+        }
+
+
+        if(
+            conectado(
+                r,c,
+                r,c-1,
+                "O",
+                "L"
+            )
+        ){
+
+            filaBusca.push(
+                [r,c-1]
+            );
+        }
+    }
+
+
+    return false;
+}
+
+
+/* =====================================================
+   COLOCAR CANO
+   ===================================================== */
+
+function colocarCano(
+    x,
+    y
+){
+
+    if(fim)
+        return;
+
+
+    const c =
+        Math.floor(
+            (x-offsetX) /
+            cell
+        );
+
+
+    const r =
+        Math.floor(
+            (y-offsetY) /
+            cell
+        );
+
+
+    if(
+        r<0 ||
+        r>=LINHAS ||
+        c<0 ||
+        c>=COLUNAS
+    )
+        return;
+
+
+    if(
+        r===entrada.r &&
+        c===entrada.c
+    )
+        return;
+
+
+    if(
+        r===saida.r &&
+        c===saida.c
+    )
+        return;
+
+
+    if(
+        grade[r][c]
+    )
+        return;
+
+
+    obterCanoAtual();
+
+
+    const tipo =
+        rotacionarTipo(
+            canoAtual,
+            rotacaoAtual
+        );
+
+
+    grade[r][c] =
+        tipo;
+
+
+    canosColocados++;
+
+
+    /*
+       Consome somente
+       depois da colocação.
+    */
+
+    canoAtual = null;
+
+    rotacaoAtual = 0;
+
+
+    som("click");
+
+
+    if(
+        checarFluxo()
+    ){
+
+        finalizar(true);
+    }
+}
+
+
+/* =====================================================
+   FINAL
+   ===================================================== */
+
+function finalizar(resultado){
+
+    fim = true;
+
+    agua = true;
+
+    venceu = resultado;
+
+
+    if(venceu){
+
+        const bonusTempo =
+            Math.floor(
+                tempoRestante * 10
+            );
+
+
+        const bonus =
+            100 +
+            fase * 25 +
+            canosColocados * 15 +
+            bonusTempo;
+
+
+        score += bonus;
+
+
+        if(
+            score > recorde
+        ){
+
+            recorde =
+                score;
+
+            localStorage.setItem(
+                "pipeControlRecorde1000",
+                recorde
+            );
+        }
+
+
+        /*
+           Ranking com nome: verifica após o
+           cálculo definitivo da pontuação da fase.
+        */
+
+        registrarRecorde(
+            score,
+            fase
+        );
+
+        if(
+            fase === TOTAL_FASES
+        ){
+
+            final = true;
+
+            som("final");
+
+        }else{
+
+            som("win");
+
+            nextBtn.style.display =
+                "block";
+        }
+
+    }else{
+
+        som("lose");
+    }
+}
+
+
+/* =====================================================
+   DESENHAR CANO
+   ===================================================== */
+
+function desenharCano(
+    tipo,
+    x,
+    y,
+    ativo=false,
+    tamanho=cell
+){
+
+    if(!tipo)
+        return;
+
+
+    const d =
+        CANOS[tipo];
+
+
+    const cx =
+        x + tamanho/2;
+
+    const cy =
+        y + tamanho/2;
+
+
+    const ext =
+        Math.max(
+            11,
+            tamanho*.24
+        );
+
+
+    const interior =
+        Math.max(
+            4,
+            tamanho*.10
+        );
+
+
+    ctx.fillStyle =
+        ativo
+            ? AGUA
+            : ELEMENTO;
+
+
+    /*
+       CENTRO
+    */
+
+    ctx.fillRect(
+
+        cx-ext/2,
+
+        cy-ext/2,
+
+        ext,
+
+        ext
+    );
+
+
+    /*
+       NORTE
+    */
+
+    if(d.N){
+
+        ctx.fillRect(
+
+            cx-ext/2,
+
+            y,
+
+            ext,
+
+            tamanho/2
+        );
+    }
+
+
+    /*
+       SUL
+    */
+
+    if(d.S){
+
+        ctx.fillRect(
+
+            cx-ext/2,
+
+            cy,
+
+            ext,
+
+            tamanho/2
+        );
+    }
+
+
+    /*
+       LESTE
+    */
+
+    if(d.L){
+
+        ctx.fillRect(
+
+            cx,
+
+            cy-ext/2,
+
+            tamanho/2,
+
+            ext
+        );
+    }
+
+
+    /*
+       OESTE
+    */
+
+    if(d.O){
+
+        ctx.fillRect(
+
+            x,
+
+            cy-ext/2,
+
+            tamanho/2,
+
+            ext
+        );
+    }
+
+
+    /*
+       MIOLO
+    */
+
+    ctx.fillStyle =
+        ativo
+            ? AGUA
+            : FUNDO;
+
+
+    ctx.fillRect(
+
+        cx-interior/2,
+
+        cy-interior/2,
+
+        interior,
+
+        interior
+    );
+
+
+    if(d.N){
+
+        ctx.fillRect(
+
+            cx-interior/2,
+
+            y,
+
+            interior,
+
+            tamanho/2
+        );
+    }
+
+
+    if(d.S){
+
+        ctx.fillRect(
+
+            cx-interior/2,
+
+            cy,
+
+            interior,
+
+            tamanho/2
+        );
+    }
+
+
+    if(d.L){
+
+        ctx.fillRect(
+
+            cx,
+
+            cy-interior/2,
+
+            tamanho/2,
+
+            interior
+        );
+    }
+
+
+    if(d.O){
+
+        ctx.fillRect(
+
+            x,
+
+            cy-interior/2,
+
+            tamanho/2,
+
+            interior
+        );
+    }
+}
+
+
+/* =====================================================
+   TEXTO
+   ===================================================== */
+
+function texto(
+    valor,
+    x,
+    y,
+    tamanho=14,
+    alinhamento="left"
+){
+
+    ctx.fillStyle =
+        ELEMENTO;
+
+    ctx.font =
+        `bold ${tamanho}px "Courier New",monospace`;
+
+    ctx.textAlign =
+        alinhamento;
+
+    ctx.textBaseline =
+        "middle";
+
+    ctx.fillText(
+        valor,
+        x,
+        y
+    );
+}
+
+
+/* =====================================================
+   HUD NOVO
+   ===================================================== */
+
+function desenharHUD(){
+
+    /*
+       ==================================================
+       LINHA 1
+       ==================================================
+
+       SCORE        STAGE        HI
+    */
+
+    texto(
+        "SCORE:"+
+        String(score)
+            .padStart(7,"0"),
+
+        15,
+        19,
+        13
+    );
+
+
+    texto(
+        "STAGE "+
+        String(fase)
+            .padStart(4,"0")+
+        "/1000",
+
+        W/2,
+        19,
+        16,
+        "center"
+    );
+
+
+    texto(
+        "HI:"+
+        String(recorde)
+            .padStart(7,"0"),
+
+        W-15,
+        19,
+        13,
+        "right"
+    );
+
+
+    /*
+       ==================================================
+       LINHA 2
+       ==================================================
+    */
+
+    texto(
+        dificuldade(fase),
+
+        W/2,
+        41,
+        10,
+        "center"
+    );
+
+
+    /*
+       ==================================================
+       CRONÔMETRO
+       ==================================================
+    */
+
+    const barraW =
+        Math.min(
+            180,
+            W*.32
+        );
+
+    const barraH = 12;
+
+    const barraX =
+        W/2 -
+        barraW/2;
+
+    const barraY = 53;
+
+
+    ctx.strokeStyle =
+        ELEMENTO;
+
+    ctx.lineWidth = 2;
+
+
+    ctx.strokeRect(
+
+        barraX,
+
+        barraY,
+
+        barraW,
+
+        barraH
+    );
+
+
+    const progresso =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                tempoRestante /
+                tempoLimite
+            )
+        );
+
+
+    ctx.fillStyle =
+        ELEMENTO;
+
+
+    ctx.fillRect(
+
+        barraX+2,
+
+        barraY+2,
+
+        (barraW-4) *
+        progresso,
+
+        barraH-4
+    );
+
+
+    texto(
+
+        tempoRestante
+            .toFixed(1)+"s",
+
+        W/2,
+
+        73,
+
+        10,
+
+        "center"
+    );
+
+
+    /*
+       ==================================================
+       ÁREA DAS PEÇAS
+       ==================================================
+
+       [ PEÇA ATUAL ]
+                     PRÓXIMAS
+                     [ ][ ][ ][ ]
+    */
+
+
+    const areaY = 91;
+
+
+    /*
+       BLOCO DA PEÇA ATUAL
+    */
+
+    const atualSize =
+        Math.min(
+            48,
+            Math.max(
+                42,
+                W*.075
+            )
+        );
+
+
+    const atualX =
+        22;
+
+
+    const atualY =
+        areaY;
+
+
+    /*
+       Caixa externa
+    */
+
+    ctx.strokeStyle =
+        ELEMENTO;
+
+    ctx.lineWidth = 2;
+
+
+    ctx.strokeRect(
+
+        atualX,
+
+        atualY,
+
+        atualSize,
+
+        atualSize
+    );
+
+
+    /*
+       Peça atual
+    */
+
+    obterCanoAtual();
+
+
+    const tipoAtual =
+        rotacionarTipo(
+            canoAtual,
+            rotacaoAtual
+        );
+
+
+    desenharCano(
+
+        tipoAtual,
+
+        atualX,
+
+        atualY,
+
+        false,
+
+        atualSize
+    );
+
+
+    /*
+       Texto da peça atual
+    */
+
+    texto(
+
+        "ATUAL",
+
+        atualX +
+        atualSize/2,
+
+        atualY +
+        atualSize +
+        9,
+
+        8,
+
+        "center"
+    );
+
+
+    texto(
+
+        "↻ "+
+        (
+            rotacaoAtual *
+            90
+        )+"°",
+
+        atualX +
+        atualSize/2,
+
+        atualY +
+        atualSize +
+        21,
+
+        8,
+
+        "center"
+    );
+
+
+    /*
+       ==================================================
+       PRÓXIMAS PEÇAS
+       ==================================================
+    */
+
+    const mini =
+        Math.min(
+            38,
+            Math.max(
+                30,
+                W*.06
+            )
+        );
+
+
+    const gap = 7;
+
+
+    const filaLargura =
+        mini * 4 +
+        gap * 3;
+
+
+    /*
+       A fila fica sempre
+       no lado direito.
+
+       Nunca invade a peça atual.
+    */
+
+    const filaX =
+        W -
+        filaLargura -
+        18;
+
+
+    const filaY =
+        areaY +
+        5;
+
+
+    texto(
+
+        "PRÓXIMAS",
+
+        filaX +
+        filaLargura/2,
+
+        filaY -
+        8,
+
+        8,
+
+        "center"
+    );
+
+
+    fila.forEach(
+        (cano,i)=>{
+
+            const x =
+                filaX +
+                i *
+                (
+                    mini +
+                    gap
+                );
+
+
+            ctx.strokeStyle =
+                GRADE;
+
+            ctx.lineWidth = 1;
+
+
+            ctx.strokeRect(
+
+                x,
+
+                filaY,
+
+                mini,
+
+                mini
+            );
+
+
+            desenharCano(
+
+                cano,
+
+                x,
+
+                filaY,
+
+                false,
+
+                mini
+            );
+        }
+    );
+}
+
+
+/* =====================================================
+   TABULEIRO
+   ===================================================== */
+
+function desenharTabuleiro(){
+
+    for(
+        let r=0;
+        r<LINHAS;
+        r++
+    ){
+
+        for(
+            let c=0;
+            c<COLUNAS;
+            c++
+        ){
+
+            const x =
+                offsetX +
+                c*cell;
+
+            const y =
+                offsetY +
+                r*cell;
+
+
+            /*
+               GRADE
+            */
+
+            ctx.strokeStyle =
+                GRADE;
+
+            ctx.lineWidth = 1;
+
+
+            ctx.strokeRect(
+
+                x,
+
+                y,
+
+                cell,
+
+                cell
+            );
+
+
+            /*
+               ENTRADA
+            */
+
+            if(
+                r===entrada.r &&
+                c===entrada.c
+            ){
+
+                ctx.strokeStyle =
+                    ELEMENTO;
+
+                ctx.lineWidth = 3;
+
+
+                ctx.strokeRect(
+
+                    x+2,
+
+                    y+2,
+
+                    cell-4,
+
+                    cell-4
+                );
+
+
+                texto(
+
+                    "IN",
+
+                    x+
+                    cell/2,
+
+                    y+
+                    cell/2,
+
+                    9,
+
+                    "center"
+                );
+            }
+
+
+            /*
+               SAÍDA
+            */
+
+            if(
+                r===saida.r &&
+                c===saida.c
+            ){
+
+                ctx.strokeStyle =
+                    ELEMENTO;
+
+                ctx.lineWidth = 3;
+
+
+                ctx.strokeRect(
+
+                    x+2,
+
+                    y+2,
+
+                    cell-4,
+
+                    cell-4
+                );
+
+
+                texto(
+
+                    "X",
+
+                    x+
+                    cell/2,
+
+                    y+
+                    cell/2,
+
+                    14,
+
+                    "center"
+                );
+            }
+
+
+            /*
+               CANO
+            */
+
+            if(
+                grade[r][c]
+            ){
+
+                desenharCano(
+
+                    grade[r][c],
+
+                    x,
+
+                    y,
+
+                    agua &&
+                    venceu
+                );
+            }
+        }
+    }
+}
+
+
+/* =====================================================
+   FINAL DA FASE
+   ===================================================== */
+
+function desenharFinal(){
+
+    if(!fim)
+        return;
+
+
+    const altura =
+        58;
+
+
+    const y =
+        H -
+        78;
+
+
+    ctx.fillStyle =
+        FUNDO;
+
+
+    ctx.fillRect(
+
+        0,
+
+        y,
+
+        W,
+
+        altura
+    );
+
+
+    ctx.strokeStyle =
+        ELEMENTO;
+
+    ctx.lineWidth = 2;
+
+
+    ctx.strokeRect(
+
+        0,
+
+        y,
+
+        W,
+
+        altura
+    );
+
+
+    let mensagem;
+
+
+    if(final){
+
+        mensagem =
+            "VOCÊ ZEROU AS 1000 FASES!";
+
+    }
+
+    else if(venceu){
+
+        mensagem =
+            "STAGE "+
+            String(fase)
+                .padStart(4,"0")+
+            " CLEAR!";
+
+    }
+
+    else{
+
+        mensagem =
+            "GAME OVER!";
+    }
+
+
+    texto(
+
+        mensagem,
+
+        W/2,
+
+        y+20,
+
+        W<600
+            ? 11
+            : 16,
+
+        "center"
+    );
+
+
+    if(final){
+
+        texto(
+
+            "DESAFIO COMPLETO!",
+
+            W/2,
+
+            y+40,
+
+            9,
+
+            "center"
+        );
+
+    }
+
+    else if(venceu){
+
+        texto(
+
+            "USE PRÓXIMA PARA CONTINUAR",
+
+            W/2,
+
+            y+40,
+
+            9,
+
+            "center"
+        );
+
+    }
+
+    else{
+
+        texto(
+
+            "USE REINICIAR PARA TENTAR NOVAMENTE",
+
+            W/2,
+
+            y+40,
+
+            8,
+
+            "center"
+        );
+    }
+}
+
+
+/* =====================================================
+   RENDER
+   ===================================================== */
+
+function render(){
+
+    ctx.clearRect(
+        0,
+        0,
+        W,
+        H
+    );
+
+
+    ctx.fillStyle =
+        FUNDO;
+
+
+    ctx.fillRect(
+        0,
+        0,
+        W,
+        H
+    );
+
+
+    desenharHUD();
+
+    desenharTabuleiro();
+
+    desenharFinal();
+}
+
+
+/* =====================================================
+   LOOP
+   ===================================================== */
+
+function loop(agora){
+
+    const dt =
+        Math.min(
+            (agora -
+            ultimoTempo) /
+            1000,
+
+            .1
+        );
+
+
+    ultimoTempo =
+        agora;
+
+
+    if(!fim){
+
+        tempoRestante -=
+            dt;
+
+
+        if(
+            tempoRestante <= 0
+        ){
+
+            tempoRestante = 0;
+
+
+            if(
+                checarFluxo()
+            ){
+
+                finalizar(true);
+
+            }
+
+            else{
+
+                finalizar(false);
+            }
+        }
+    }
+
+
+    render();
+
+
+    requestAnimationFrame(
+        loop
+    );
+}
+
+
+/* =====================================================
+   CONTROLE GIRAR
+   ===================================================== */
+
+rotateBtn.addEventListener(
+    "click",
+    ()=>{
+
+        iniciarAudio();
+
+        girarCano();
+    }
+);
+
+
+/* =====================================================
+   REINICIAR
+   ===================================================== */
+
+restartBtn.addEventListener(
+    "click",
+    ()=>{
+
+        iniciarAudio();
+
+        iniciarFase();
+    }
+);
+
+
+/* =====================================================
+   PRÓXIMA
+   ===================================================== */
+
+nextBtn.addEventListener(
+    "click",
+    ()=>{
+
+        iniciarAudio();
+
+        if(
+            !fim ||
+            !venceu ||
+            fase>=TOTAL_FASES
+        ){
+
+            return;
+        }
+
+
+        fase++;
+
+        iniciarFase();
+    }
+);
+
+
+/* =====================================================
+   FULLSCREEN
+   ===================================================== */
+
+fullscreenBtn.addEventListener(
+    "click",
+    async ()=>{
+
+        iniciarAudio();
+
+        try{
+
+            if(
+                !document.fullscreenElement
+            ){
+
+                await document
+                    .documentElement
+                    .requestFullscreen();
+
+            }
+
+            else{
+
+                await document
+                    .exitFullscreen();
+            }
+
+        }
+
+        catch(error){
+
+            console.warn(
+                "Fullscreen indisponível",
+                error
+            );
+        }
+    }
+);
+
+
+/* =====================================================
+   TOUCH / MOUSE
+   ===================================================== */
+
+canvas.addEventListener(
+    "pointerdown",
+    event=>{
+
+        event.preventDefault();
+
+        iniciarAudio();
+
+        colocarCano(
+
+            event.clientX,
+
+            event.clientY
+        );
+    }
+);
+
+
+/* =====================================================
+   TECLADO
+   ===================================================== */
+
+window.addEventListener(
+    "keydown",
+    event=>{
+
+        /*
+           R = GIRAR
+        */
+
+        if(
+            event.key.toLowerCase()
+            === "r"
+        ){
+
+            event.preventDefault();
+
+            iniciarAudio();
+
+            girarCano();
+
+            return;
+        }
+
+
+        /*
+           ESPAÇO
+        */
+
+        if(
+            event.code === "Space"
+        ){
+
+            event.preventDefault();
+
+            iniciarAudio();
+
+
+            if(!fim)
+                return;
+
+
+            if(venceu){
+
+                if(
+                    fase <
+                    TOTAL_FASES
+                ){
+
+                    fase++;
+
+                    iniciarFase();
+                }
+
+            }
+
+            else{
+
+                iniciarFase();
+            }
+        }
+    }
+);
+
+
+/* =====================================================
+   FULLSCREEN CHANGE
+   ===================================================== */
+
+document.addEventListener(
+    "fullscreenchange",
+    ()=>{
+
+        fullscreenBtn.textContent =
+
+            document.fullscreenElement
+
+                ? "⛶ SAIR"
+
+                : "⛶ TELA INTEIRA";
+
+
+        setTimeout(
+            resize,
+            100
+        );
+    }
+);
+
+
+/* =====================================================
+   INICIALIZAÇÃO
+   ===================================================== */
+
+resize();
+
+iniciarFase();
+
+requestAnimationFrame(
+    loop
+);
+
+</script>
+
+</body>
+</html>
